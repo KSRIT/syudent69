@@ -196,59 +196,21 @@
                         </div>
                     </div>
 
-                    <!-- 3. Tables (Lists of Students) -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- 3. Timeline Grouped by Date -->
+                    <div class="mt-12">
+                        <div class="flex justify-between items-center mb-6 pb-2 border-b-2 border-slate-100">
+                            <h3 class="text-xl font-bold text-slate-700 flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                ข้อมูลการรับสมัครแยกตามวัน
+                            </h3>
+                        </div>
                         
-                        <!-- List ม.1 -->
-                        <div class="bg-white p-6 border border-blue-100 rounded-3xl shadow-sm relative overflow-hidden">
-                            <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
-                            <div class="flex justify-between items-center mb-4 pl-2">
-                                <h3 class="text-lg font-bold text-blue-700">รายชื่อ ม.1 ล่าสุด</h3>
-                                <span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full" id="count-list-m1">0</span>
-                            </div>
-                            
-                            <div class="overflow-x-auto max-h-80 overflow-y-auto pr-2 custom-scrollbar border border-slate-100 rounded-xl">
-                                <table class="w-full text-sm text-left text-slate-600">
-                                    <thead class="text-xs text-slate-500 uppercase bg-slate-50 sticky top-0 shadow-sm">
-                                        <tr>
-                                            <th scope="col" class="px-4 py-3 whitespace-nowrap">เลขที่</th>
-                                            <th scope="col" class="px-4 py-3 whitespace-nowrap">ชื่อ-สกุล</th>
-                                            <th scope="col" class="px-4 py-3 whitespace-nowrap">โรงเรียนเดิม</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="list-m1-body" class="divide-y divide-slate-100">
-                                        <!-- JS จะนำข้อมูลมาใส่ตรงนี้ -->
-                                        <tr><td colspan="3" class="px-4 py-8 text-center text-slate-400">กำลังโหลด...</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                        <div id="applicants-timeline" class="space-y-6">
+                            <!-- JS จะนำข้อมูลมาใส่ตรงนี้ -->
+                            <div class="text-center py-8 text-slate-400">กำลังโหลด...</div>
                         </div>
-
-                        <!-- List ม.4 -->
-                        <div class="bg-white p-6 border border-pink-100 rounded-3xl shadow-sm relative overflow-hidden">
-                            <div class="absolute top-0 left-0 w-1 h-full bg-pink-500"></div>
-                            <div class="flex justify-between items-center mb-4 pl-2">
-                                <h3 class="text-lg font-bold text-pink-600">รายชื่อ ม.4 ล่าสุด</h3>
-                                <span class="bg-pink-100 text-pink-800 text-xs font-bold px-3 py-1 rounded-full" id="count-list-m4">0</span>
-                            </div>
-                            
-                            <div class="overflow-x-auto max-h-80 overflow-y-auto pr-2 custom-scrollbar border border-slate-100 rounded-xl">
-                                <table class="w-full text-sm text-left text-slate-600">
-                                    <thead class="text-xs text-slate-500 uppercase bg-slate-50 sticky top-0 shadow-sm">
-                                        <tr>
-                                            <th scope="col" class="px-4 py-3 whitespace-nowrap">เลขที่</th>
-                                            <th scope="col" class="px-4 py-3 whitespace-nowrap">ชื่อ-สกุล</th>
-                                            <th scope="col" class="px-4 py-3 whitespace-nowrap">โรงเรียนเดิม</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="list-m4-body" class="divide-y divide-slate-100">
-                                        <!-- JS จะนำข้อมูลมาใส่ตรงนี้ -->
-                                        <tr><td colspan="3" class="px-4 py-8 text-center text-slate-400">กำลังโหลด...</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
                     </div>
                     
                     <div class="text-center mt-10">
@@ -475,9 +437,8 @@
                 if(data.dailyStats) renderDailyChart(data.dailyStats);
                 if(data.schoolStats) renderSchoolChart(data.schoolStats);
                 
-                // อัปเดตตารางรายชื่อ
-                renderStudentTable(data.recentM1, 'list-m1-body', 'count-list-m1', 'ม.1');
-                renderStudentTable(data.recentM4, 'list-m4-body', 'count-list-m4', 'ม.4');
+                // อัปเดตรายชื่อแบบ Timeline แยกตามวัน
+                renderApplicantsTimeline(data.applicantsByDate);
                 
                 document.getElementById('loadingDash').classList.add('hidden');
                 document.getElementById('dashboardContent').classList.remove('hidden');
@@ -486,34 +447,119 @@
             }
         }
 
-        // ฟังก์ชันสร้างตารางรายชื่อ
-        function renderStudentTable(studentArray, tbodyId, countId, gradeLevel) {
-            const tbody = document.getElementById(tbodyId);
-            const countSpan = document.getElementById(countId);
-
-            if (!studentArray || !Array.isArray(studentArray) || studentArray.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-8 text-center text-slate-400 bg-slate-50/50 rounded-lg">ยังไม่มีข้อมูล หรือรอการอัปเดตระบบหลังบ้าน</td></tr>`;
-                countSpan.innerText = "0";
+        // ฟังก์ชันสร้าง Timeline รายชื่อแบ่งตามวัน
+        function renderApplicantsTimeline(dataByDate) {
+            const container = document.getElementById('applicants-timeline');
+            container.innerHTML = '';
+            
+            if (!dataByDate || Object.keys(dataByDate).length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
+                        <p class="text-slate-500 text-lg font-medium">ยังไม่มีข้อมูลผู้สมัครในระบบ</p>
+                    </div>`;
                 return;
             }
 
-            countSpan.innerText = studentArray.length;
-            
-            const rowsHtml = studentArray.map(student => {
+            // เรียงวันที่จากล่าสุดไปเก่าสุด
+            const dates = Object.keys(dataByDate).sort((a, b) => b.localeCompare(a));
+            const months = ["", "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+
+            dates.forEach((dateStr) => {
+                const parts = dateStr.split('-');
+                const thDate = `${parseInt(parts[2])} ${months[parseInt(parts[1])]} ${parseInt(parts[0]) + 543}`;
+                
+                const m1List = dataByDate[dateStr]["ม.1"] || [];
+                const m4List = dataByDate[dateStr]["ม.4"] || [];
+                const totalToday = m1List.length + m4List.length;
+
+                let html = `
+                <div class="bg-white border border-slate-100 rounded-3xl shadow-sm overflow-hidden mb-6 relative hover:shadow-md transition-shadow duration-300">
+                    <!-- Header วันที่ -->
+                    <div class="bg-slate-50 px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-white text-slate-700 rounded-xl p-2 shadow-sm border border-slate-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <h4 class="text-lg font-bold text-slate-800">วันที่ ${thDate}</h4>
+                        </div>
+                        <div class="mt-3 sm:mt-0">
+                            <span class="text-sm font-bold bg-white border border-slate-200 text-slate-600 px-4 py-1.5 rounded-full shadow-sm">
+                                สมัครวันนี้รวม ${totalToday} คน
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- เนื้อหา ม.1 และ ม.4 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-100">
+                        <!-- ฝั่ง ม.1 -->
+                        <div class="p-6 relative overflow-hidden bg-white hover:bg-slate-50/50 transition-colors">
+                            <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                            <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
+                                <h5 class="font-bold text-blue-700">ผู้สมัคร ม.1</h5>
+                                <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-1 rounded-md">${m1List.length} คน</span>
+                            </div>
+                            <div class="max-h-[350px] overflow-y-auto custom-scrollbar pr-2 space-y-3">
+                                ${generateStudentListHTML(m1List, 'blue')}
+                            </div>
+                        </div>
+
+                        <!-- ฝั่ง ม.4 -->
+                        <div class="p-6 relative overflow-hidden bg-white hover:bg-slate-50/50 transition-colors">
+                            <div class="absolute top-0 left-0 w-1 h-full bg-pink-500"></div>
+                            <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
+                                <h5 class="font-bold text-pink-600">ผู้สมัคร ม.4</h5>
+                                <span class="bg-pink-100 text-pink-800 text-xs font-bold px-2.5 py-1 rounded-md">${m4List.length} คน</span>
+                            </div>
+                            <div class="max-h-[350px] overflow-y-auto custom-scrollbar pr-2 space-y-3">
+                                ${generateStudentListHTML(m4List, 'pink')}
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+                
+                container.innerHTML += html;
+            });
+        }
+
+        function generateStudentListHTML(list, colorTheme) {
+            if(list.length === 0) {
+                return `
+                <div class="flex flex-col items-center justify-center py-8 text-slate-400 bg-slate-50/50 rounded-xl">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-2 opacity-30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    <p class="text-sm">ไม่มีผู้สมัคร</p>
+                </div>`;
+            }
+
+            const textColor = colorTheme === 'blue' ? 'text-blue-600' : 'text-pink-600';
+            const badgeBg = colorTheme === 'blue' ? 'bg-blue-50' : 'bg-pink-50';
+            const badgeBorder = colorTheme === 'blue' ? 'border-blue-100' : 'border-pink-100';
+
+            let html = '';
+            list.forEach(student => {
                 const no = student.appNo || student.AppNo || student['เลขที่'] || '-';
                 const name = student.fullName || student.name || student['ชื่อ-สกุล'] || '-';
                 const school = student.prevSchool || student.school || student['โรงเรียนเดิม'] || '-';
-                
-                return `
-                <tr class="hover:bg-slate-50 transition-colors group cursor-default">
-                    <td class="px-4 py-3 font-medium text-slate-700 whitespace-nowrap group-hover:text-blue-600 transition-colors">${no}</td>
-                    <td class="px-4 py-3 whitespace-nowrap">${name}</td>
-                    <td class="px-4 py-3 text-slate-400 text-xs">${school}</td>
-                </tr>
-                `;
-            }).join('');
+                const time = student.time || '';
 
-            tbody.innerHTML = rowsHtml;
+                html += `
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-white border border-slate-100 rounded-2xl hover:border-${colorTheme}-200 hover:shadow-sm transition-all group">
+                    <div class="mb-2 sm:mb-0">
+                        <p class="font-bold text-slate-700 text-sm group-hover:${textColor} transition-colors">${name}</p>
+                        <p class="text-[11px] text-slate-400 mt-0.5 line-clamp-1">รร.เดิม: ${school}</p>
+                    </div>
+                    <div class="flex items-center gap-2 justify-between sm:justify-end mt-2 sm:mt-0">
+                        <span class="text-[11px] font-bold text-slate-600 ${badgeBg} border ${badgeBorder} px-2.5 py-1 rounded-lg">
+                            เลขที่: <span class="${textColor}">${no}</span>
+                        </span>
+                        ${time ? `<span class="text-[10px] text-slate-400 bg-slate-50 px-2 py-1 rounded-lg border border-slate-100">${time} น.</span>` : ''}
+                    </div>
+                </div>`;
+            });
+            return html;
         }
 
         function renderDailyChart(dailyStats) {
