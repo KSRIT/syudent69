@@ -8,96 +8,128 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Sarabun', sans-serif; background-color: #f3f4f6; }
-        .tab-active { border-bottom: 2px solid #2563eb; color: #2563eb; font-weight: 600; }
-        .tab-inactive { color: #6b7280; }
-        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #2563eb; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; }
+        body { font-family: 'Sarabun', sans-serif; background-color: #f8fafc; }
+        
+        /* Custom Tab Styles - Pink/Blue Theme */
+        .tab-active { border-bottom: 3px solid #ec4899; color: #ec4899; font-weight: 700; }
+        .tab-inactive { color: #64748b; font-weight: 500; }
+        .tab-inactive:hover { color: #3b82f6; }
+        
+        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #ec4899; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
         /* Animation ตอนข้อมูลถูกกรอกอัตโนมัติ */
         .highlight-input { animation: highlight 2s ease-out; }
-        @keyframes highlight { 0% { background-color: #dbeafe; border-color: #3b82f6; } 100% { background-color: #ffffff; border-color: #e5e7eb; } }
+        @keyframes highlight { 
+            0% { background-color: #fce7f3; border-color: #ec4899; box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.2); } 
+            100% { background-color: #ffffff; border-color: #e2e8f0; box-shadow: none; } 
+        }
+
+        /* Custom Input styling */
+        .modern-input {
+            width: 100%; padding: 0.75rem 1rem; border: 1px solid #e2e8f0; border-radius: 0.75rem;
+            transition: all 0.3s; outline: none; background-color: #ffffff;
+        }
+        .modern-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
     </style>
 </head>
-<body class="min-h-screen p-4 md:p-8">
+<body class="min-h-screen p-4 md:p-8 flex justify-center items-start">
 
-    <!-- === URL ของ Google Apps Script ที่เชื่อมต่อไว้ === -->
+    <!-- === URL ของ Google Apps Script === -->
     <script>
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxNR0ii4qExiS9LBiDyiDLJA729GXUmlhEB3iaKopaMEVZLLTUjlj7llXinkr44lpzB/exec";
     </script>
 
-    <div class="max-w-5xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+    <div class="w-full max-w-5xl bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden border border-slate-100">
         
-        <div class="bg-blue-800 text-white p-6 text-center">
-            <h1 class="text-2xl md:text-3xl font-bold">ระบบบันทึกรายชื่อผู้สมัครเรียน</h1>
-            <p class="text-lg mt-2 text-blue-100">โรงเรียนปากแพรกวิทยาคม</p>
+        <!-- Header Gradient ฟ้า-ชมพู -->
+        <div class="bg-gradient-to-r from-blue-600 via-blue-500 to-pink-500 text-white p-8 text-center relative overflow-hidden">
+            <div class="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-white opacity-10 rounded-full blur-2xl"></div>
+            <div class="absolute bottom-0 left-0 -mb-10 -ml-10 w-32 h-32 bg-white opacity-10 rounded-full blur-xl"></div>
+            <h1 class="text-3xl md:text-4xl font-bold relative z-10 tracking-tight">ระบบบันทึกรายชื่อผู้สมัครเรียน</h1>
+            <p class="text-lg mt-2 text-blue-50 font-medium relative z-10">โรงเรียนปากแพรกวิทยาคม</p>
         </div>
 
-        <div class="flex border-b px-6 pt-4">
-            <button onclick="switchTab('form')" id="tab-form" class="pb-3 px-4 tab-active focus:outline-none text-lg">📝 ฟอร์มรับสมัคร</button>
-            <button onclick="switchTab('dashboard')" id="tab-dashboard" class="pb-3 px-4 tab-inactive focus:outline-none text-lg ml-4">📊 แดชบอร์ดสถิติ</button>
+        <!-- Navigation Tabs -->
+        <div class="flex border-b border-slate-200 px-6 md:px-10 pt-6">
+            <button onclick="switchTab('form')" id="tab-form" class="pb-4 px-2 tab-active focus:outline-none text-lg transition-colors duration-200">
+                <span class="flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg> ฟอร์มรับสมัคร</span>
+            </button>
+            <button onclick="switchTab('dashboard')" id="tab-dashboard" class="pb-4 px-2 tab-inactive focus:outline-none text-lg ml-8 transition-colors duration-200">
+                <span class="flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" /></svg> แดชบอร์ดสถิติ</span>
+            </button>
         </div>
 
-        <div class="p-6 md:p-8">
+        <div class="p-6 md:p-10">
             
             <!-- ===================== ส่วนที่ 1: ฟอร์มรับสมัคร ===================== -->
-            <div id="section-form" class="block">
+            <div id="section-form" class="block animate-fade-in">
                 
-                <!-- ส่วนถ่ายรูป/อัปโหลด -->
-                <div class="mb-8 p-6 bg-indigo-50 border border-indigo-100 rounded-xl text-center max-w-2xl mx-auto shadow-sm">
-                    <h3 class="text-indigo-800 text-lg font-bold mb-2">📸 สแกนใบสมัครด้วยกล้อง (ดึงข้อมูลอัตโนมัติ)</h3>
-                    <p class="text-sm text-indigo-600 mb-4">ระบบสามารถอ่านลายมือแล้วกรอกฟอร์มให้คุณอัตโนมัติ (สามารถแก้ไขให้ถูกต้องได้ก่อนบันทึก)</p>
-                    
-                    <!-- Input รับรูป (รองรับกล้องมือถือ) -->
-                    <input type="file" accept="image/*" capture="environment" id="cameraInput" class="hidden" onchange="processImage(event)">
-                    
-                    <button type="button" onclick="document.getElementById('cameraInput').click()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-lg shadow-md transition flex items-center justify-center mx-auto gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <!-- ส่วนถ่ายรูป/อัปโหลด (กล้องมือถือโดยตรง) -->
+                <div class="mb-10 p-8 bg-slate-50 border-2 border-dashed border-pink-300 rounded-3xl text-center max-w-2xl mx-auto hover:bg-pink-50/50 transition duration-300">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-pink-100 text-pink-500 mb-4 shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
-                        ถ่ายรูปใบสมัคร
+                    </div>
+                    <h3 class="text-slate-800 text-xl font-bold mb-2">สแกนใบสมัคร</h3>
+                    <p class="text-sm text-slate-500 mb-6 max-w-sm mx-auto">ถ่ายรูปใบสมัครด้วยมือถือ ระบบ AI จะดึงข้อมูลมากรอกฟอร์มให้คุณอัตโนมัติ</p>
+                    
+                    <!-- Input รับรูป (capture="environment" บังคับเปิดกล้องหลังมือถือ) -->
+                    <input type="file" accept="image/*" capture="environment" id="cameraInput" class="hidden" onchange="processImage(event)">
+                    
+                    <button type="button" onclick="document.getElementById('cameraInput').click()" class="bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg shadow-pink-200 transition-all transform hover:-translate-y-0.5 flex items-center justify-center mx-auto gap-3 text-lg">
+                        <span>เปิดกล้องสแกน</span>
                     </button>
                     
-                    <div id="ocrStatus" class="mt-4 text-sm font-medium hidden"></div>
+                    <div id="ocrStatus" class="mt-5 text-sm font-medium hidden"></div>
                 </div>
 
-                <div class="relative flex py-5 items-center max-w-2xl mx-auto">
-                    <div class="flex-grow border-t border-gray-300"></div>
-                    <span class="flex-shrink-0 mx-4 text-gray-400">หรือ กรอกด้วยตัวเอง</span>
-                    <div class="flex-grow border-t border-gray-300"></div>
+                <div class="relative flex py-4 items-center max-w-2xl mx-auto mb-6">
+                    <div class="flex-grow border-t border-slate-200"></div>
+                    <span class="flex-shrink-0 mx-4 text-slate-400 text-sm font-medium bg-white px-2">หรือกรอกข้อมูลด้วยตัวเอง</span>
+                    <div class="flex-grow border-t border-slate-200"></div>
                 </div>
 
                 <!-- ฟอร์มข้อมูล -->
-                <form id="regForm" onsubmit="submitForm(event)" class="space-y-6 max-w-2xl mx-auto">
+                <form id="regForm" onsubmit="submitForm(event)" class="space-y-6 max-w-2xl mx-auto bg-white">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">เลขที่สมัคร *</label>
-                            <input type="text" id="appNo" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 transition outline-none">
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">เลขที่สมัคร <span class="text-pink-500">*</span></label>
+                            <input type="text" id="appNo" required class="modern-input" placeholder="ระบุเลขที่สมัคร">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">ระดับชั้น *</label>
-                            <select id="grade" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 transition outline-none">
-                                <option value="" disabled selected>เลือระดับชั้น</option>
-                                <option value="ม.1">มัธยมศึกษาปีที่ 1 (ม.1)</option>
-                                <option value="ม.4">มัธยมศึกษาปีที่ 4 (ม.4)</option>
-                            </select>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">ระดับชั้น <span class="text-pink-500">*</span></label>
+                            <div class="relative">
+                                <select id="grade" required class="modern-input appearance-none">
+                                    <option value="" disabled selected>เลือกระดับชั้น</option>
+                                    <option value="ม.1">มัธยมศึกษาปีที่ 1 (ม.1)</option>
+                                    <option value="ม.4">มัธยมศึกษาปีที่ 4 (ม.4)</option>
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
+                                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อ-นามสกุล นักเรียน *</label>
-                        <input type="text" id="fullName" required placeholder="เช่น ด.ช. สมชาย รักเรียน" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 transition outline-none">
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">ชื่อ-นามสกุล นักเรียน <span class="text-pink-500">*</span></label>
+                        <input type="text" id="fullName" required placeholder="เช่น ด.ช. สมชาย รักเรียน" class="modern-input">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">จบจากโรงเรียนเดิม *</label>
-                        <input type="text" id="prevSchool" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 transition outline-none">
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">จบจากโรงเรียนเดิม <span class="text-pink-500">*</span></label>
+                        <input type="text" id="prevSchool" required placeholder="ระบุชื่อโรงเรียนเดิม" class="modern-input">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้รับสมัคร (ครู/เจ้าหน้าที่) *</label>
-                        <input type="text" id="staffName" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 transition outline-none">
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">ชื่อผู้รับสมัคร (ครู/เจ้าหน้าที่) <span class="text-pink-500">*</span></label>
+                        <input type="text" id="staffName" required placeholder="ระบุชื่อผู้รับสมัคร" class="modern-input">
                     </div>
-                    <div class="pt-4 text-center">
-                        <button type="submit" id="submitBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-md transition duration-300 w-full md:w-auto">
-                            <span>💾 บันทึกข้อมูลการสมัคร</span>
+                    
+                    <div class="pt-6 mt-8 border-t border-slate-100 text-center">
+                        <button type="submit" id="submitBtn" class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-4 px-10 rounded-2xl shadow-xl shadow-blue-200 transition duration-300 w-full md:w-auto text-lg flex items-center justify-center mx-auto gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
+                            <span>บันทึกข้อมูลการสมัคร</span>
                         </button>
                         <div id="submitMsg" class="mt-4 text-sm font-medium hidden"></div>
                     </div>
@@ -105,41 +137,60 @@
             </div>
 
             <!-- ===================== ส่วนที่ 2: แดชบอร์ด ===================== -->
-            <div id="section-dashboard" class="hidden">
-                <div id="loadingDash" class="text-center py-10 hidden">
+            <div id="section-dashboard" class="hidden animate-fade-in">
+                <div id="loadingDash" class="text-center py-16 hidden">
                     <div class="loader mb-4"></div>
-                    <p class="text-gray-600">กำลังโหลดข้อมูลสถิติ...</p>
+                    <p class="text-pink-500 font-medium mt-2">กำลังโหลดข้อมูลสถิติ...</p>
                 </div>
+                
                 <div id="dashboardContent" class="hidden">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                        <div class="bg-blue-50 p-6 rounded-xl border border-blue-100 shadow-sm text-center">
-                            <h3 class="text-gray-500 text-sm font-semibold mb-2">ยอดสมัครรวมทั้งหมด</h3>
-                            <p class="text-4xl font-bold text-blue-700" id="stat-total">0</p>
-                            <p class="text-sm text-gray-500 mt-2">คน</p>
+                    <!-- Cards สถิติ -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                        <div class="bg-gradient-to-br from-blue-50 to-pink-50 p-6 rounded-3xl border border-pink-100 shadow-sm text-center relative overflow-hidden">
+                            <div class="absolute -right-4 -top-4 w-24 h-24 bg-pink-100 rounded-full opacity-50 blur-xl"></div>
+                            <h3 class="text-slate-500 text-sm font-bold mb-2 tracking-wide">ยอดสมัครรวมทั้งหมด</h3>
+                            <p class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-pink-500" id="stat-total">0</p>
+                            <p class="text-sm text-slate-400 mt-2 font-medium">คน</p>
                         </div>
-                        <div class="bg-green-50 p-6 rounded-xl border border-green-100 shadow-sm text-center">
-                            <h3 class="text-gray-500 text-sm font-semibold mb-2">ยอดสมัคร ม.1</h3>
-                            <p class="text-4xl font-bold text-green-600" id="stat-m1">0</p>
-                            <p class="text-sm text-gray-500 mt-2">คน</p>
+                        <div class="bg-blue-50/50 p-6 rounded-3xl border border-blue-100 shadow-sm text-center">
+                            <h3 class="text-slate-500 text-sm font-bold mb-2 tracking-wide">ยอดสมัคร ม.1</h3>
+                            <p class="text-5xl font-extrabold text-blue-600" id="stat-m1">0</p>
+                            <p class="text-sm text-slate-400 mt-2 font-medium">คน</p>
                         </div>
-                        <div class="bg-purple-50 p-6 rounded-xl border border-purple-100 shadow-sm text-center">
-                            <h3 class="text-gray-500 text-sm font-semibold mb-2">ยอดสมัคร ม.4</h3>
-                            <p class="text-4xl font-bold text-purple-600" id="stat-m4">0</p>
-                            <p class="text-sm text-gray-500 mt-2">คน</p>
+                        <div class="bg-pink-50/50 p-6 rounded-3xl border border-pink-100 shadow-sm text-center">
+                            <h3 class="text-slate-500 text-sm font-bold mb-2 tracking-wide">ยอดสมัคร ม.4</h3>
+                            <p class="text-5xl font-extrabold text-pink-500" id="stat-m4">0</p>
+                            <p class="text-sm text-slate-400 mt-2 font-medium">คน</p>
                         </div>
                     </div>
+                    
+                    <!-- กราฟ (แก้ไขปัญหาความสูงยืดอินฟินิตี้แล้ว) -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <div class="bg-white p-4 border rounded-xl shadow-sm">
-                            <h3 class="text-lg font-bold text-gray-700 mb-4 text-center">สถิติผู้สมัครรายวัน</h3>
-                            <canvas id="dailyChart" class="w-full h-64"></canvas>
+                        <div class="bg-white p-6 border border-slate-100 rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+                            <h3 class="text-lg font-bold text-slate-700 mb-6 text-center">สถิติผู้สมัครรายวัน</h3>
+                            <!-- 
+                                FIX: เพิ่ม div wrapper ที่มี relative และความสูงที่แน่นอน (h-72) 
+                                เพื่อบังคับไม่ให้ canvas ขยายตัวแบบไม่สิ้นสุด 
+                            -->
+                            <div class="relative h-72 w-full">
+                                <canvas id="dailyChart"></canvas>
+                            </div>
                         </div>
-                        <div class="bg-white p-4 border rounded-xl shadow-sm">
-                            <h3 class="text-lg font-bold text-gray-700 mb-4 text-center">สถิติโรงเรียนเดิม (Top 5)</h3>
-                            <canvas id="schoolChart" class="w-full h-64"></canvas>
+                        
+                        <div class="bg-white p-6 border border-slate-100 rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+                            <h3 class="text-lg font-bold text-slate-700 mb-6 text-center">สถิติโรงเรียนเดิม (Top 5)</h3>
+                            <!-- FIX: เพิ่ม wrapper เหมือนกัน -->
+                            <div class="relative h-72 w-full">
+                                <canvas id="schoolChart"></canvas>
+                            </div>
                         </div>
                     </div>
-                    <div class="text-right mt-4">
-                         <button onclick="loadDashboardData()" class="text-sm text-blue-600 hover:underline">🔄 รีเฟรชข้อมูล</button>
+                    
+                    <div class="text-right mt-6">
+                         <button onclick="loadDashboardData()" class="text-sm font-medium text-blue-600 hover:text-pink-500 transition-colors flex items-center justify-end gap-1 ml-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                            รีเฟรชข้อมูลล่าสุด
+                         </button>
                     </div>
                 </div>
             </div>
@@ -153,11 +204,17 @@
         function switchTab(tab) {
             document.getElementById('section-form').classList.add('hidden');
             document.getElementById('section-dashboard').classList.add('hidden');
-            document.getElementById('tab-form').className = "pb-3 px-4 tab-inactive focus:outline-none text-lg";
-            document.getElementById('tab-dashboard').className = "pb-3 px-4 tab-inactive focus:outline-none text-lg ml-4";
+            
+            // Reset styles
+            document.getElementById('tab-form').className = "pb-4 px-2 tab-inactive focus:outline-none text-lg transition-colors duration-200";
+            document.getElementById('tab-dashboard').className = "pb-4 px-2 tab-inactive focus:outline-none text-lg ml-8 transition-colors duration-200";
+            
+            // Apply active styles
             document.getElementById('section-' + tab).classList.remove('hidden');
-            document.getElementById('tab-' + tab).className = "pb-3 px-4 tab-active focus:outline-none text-lg";
-            if(tab === 'dashboard') { document.getElementById('tab-dashboard').classList.add('ml-4'); loadDashboardData(); }
+            const activeClass = "pb-4 px-2 tab-active focus:outline-none text-lg transition-colors duration-200" + (tab === 'dashboard' ? ' ml-8' : '');
+            document.getElementById('tab-' + tab).className = activeClass;
+            
+            if(tab === 'dashboard') { loadDashboardData(); }
         }
 
         // --------- ระบบ OCR อ่านภาพ ---------
@@ -166,23 +223,21 @@
             if (!file) return;
 
             const statusDiv = document.getElementById('ocrStatus');
-            statusDiv.className = "mt-4 text-sm font-medium text-indigo-600 block";
-            statusDiv.innerHTML = '<span class="loader"></span> กำลังบีบอัดรูปภาพและเตรียมส่งข้อมูล...';
+            statusDiv.className = "mt-5 text-sm font-medium text-pink-600 block bg-pink-50 p-3 rounded-xl border border-pink-100 flex items-center justify-center gap-2";
+            statusDiv.innerHTML = '<span class="loader" style="width:16px;height:16px;border-width:2px;"></span> กำลังประมวลผลรูปภาพ...';
 
-            // บีบอัดรูปภาพก่อนส่งเพื่อให้ทำงานเร็วขึ้น (ประหยัดเน็ต)
             const reader = new FileReader();
             reader.onload = function(e) {
                 const img = new Image();
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 1200; // ลดขนาดรูปเหลือ 1200px
+                    const MAX_WIDTH = 1200; 
                     const scaleSize = MAX_WIDTH / img.width;
                     canvas.width = MAX_WIDTH;
                     canvas.height = img.height * scaleSize;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                     
-                    // แปลงเป็น base64
                     const base64Compressed = canvas.toDataURL('image/jpeg', 0.8);
                     runOCR(base64Compressed);
                 };
@@ -193,7 +248,7 @@
 
         async function runOCR(base64Image) {
             const statusDiv = document.getElementById('ocrStatus');
-            statusDiv.innerHTML = '<span class="loader"></span> กำลังใช้ AI อ่านลายมือ... (อาจใช้เวลา 5-15 วินาที)';
+            statusDiv.innerHTML = '<span class="loader" style="width:16px;height:16px;border-width:2px;"></span> กำลังใช้ AI สกัดข้อมูล... (อาจใช้เวลาสักครู่)';
 
             try {
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
@@ -204,17 +259,16 @@
                 const result = await response.json();
 
                 if (result.status === "success") {
-                    statusDiv.innerHTML = "✅ สแกนสำเร็จ! <b>กรุณาตรวจสอบและแก้ไขข้อความด้านล่างให้ถูกต้องก่อนกดบันทึก</b>";
-                    statusDiv.className = "mt-4 text-sm font-medium text-green-600 block bg-green-50 p-2 rounded";
+                    statusDiv.innerHTML = "✨ สแกนสำเร็จ! <b>โปรดตรวจสอบความถูกต้องก่อนกดบันทึก</b>";
+                    statusDiv.className = "mt-5 text-sm font-medium text-emerald-700 block bg-emerald-50 p-3 rounded-xl border border-emerald-200";
                     parseAndFillForm(result.text);
                 } else {
                     throw new Error(result.message);
                 }
             } catch (error) {
                 statusDiv.innerHTML = "❌ เกิดข้อผิดพลาด: " + error.message;
-                statusDiv.className = "mt-4 text-sm font-medium text-red-600 block bg-red-50 p-2 rounded";
+                statusDiv.className = "mt-5 text-sm font-medium text-red-600 block bg-red-50 p-3 rounded-xl border border-red-200";
             } finally {
-                // ล้างค่า file input เผื่อกดถ่ายใหม่
                 document.getElementById('cameraInput').value = "";
             }
         }
@@ -228,54 +282,36 @@
                 const text = line.trim();
                 if (!text) return;
 
-                // ตรวจหา เลขที่สมัคร
                 if (text.includes('เลขที่') || text.includes('No')) {
                     const match = text.match(/[0-9a-zA-Z]+/g);
-                    if(match) {
-                        document.getElementById('appNo').value = match[match.length - 1]; 
-                        inputsUpdated.push('appNo');
-                    }
+                    if(match) { document.getElementById('appNo').value = match[match.length - 1]; inputsUpdated.push('appNo'); }
                 }
                 
-                // ตรวจหา ชื่อ
                 if (text.includes('ชื่อ') || text.includes('ด.ช.') || text.includes('ด.ญ.') || text.includes('นาย') || text.includes('นางสาว')) {
                     let name = text.replace(/.*(?:ชื่อ\-นามสกุล|ชื่อสกุล|ชื่อ)[\s\:]*/, '').trim();
-                    if(name) {
-                        document.getElementById('fullName').value = name;
-                        inputsUpdated.push('fullName');
-                    }
+                    if(name) { document.getElementById('fullName').value = name; inputsUpdated.push('fullName'); }
                 }
 
-                // ตรวจหา ระดับชั้น
                 if (text.includes('ชั้น') || text.includes('ม.')) {
                     if (text.includes('1')) { document.getElementById('grade').value = 'ม.1'; inputsUpdated.push('grade'); }
                     else if (text.includes('4')) { document.getElementById('grade').value = 'ม.4'; inputsUpdated.push('grade'); }
                 }
 
-                // ตรวจหา โรงเรียน
                 if (text.includes('โรงเรียน') || text.includes('จบจาก') || text.includes('มาจาก')) {
                     let school = text.replace(/.*(?:มาจากโรงเรียน|โรงเรียนเดิม|โรงเรียน|จบจาก)[\s\:]*/, '').trim();
-                    if(school) {
-                        document.getElementById('prevSchool').value = school;
-                        inputsUpdated.push('prevSchool');
-                    }
+                    if(school) { document.getElementById('prevSchool').value = school; inputsUpdated.push('prevSchool'); }
                 }
 
-                // ตรวจหา ผู้รับสมัคร
                 if (text.includes('ผู้รับ') || text.includes('ครู')) {
                     let staff = text.replace(/.*(?:ผู้รับสมัคร|ครูผู้รับสมัคร|ชื่อผู้รับสมัคร)[\s\:]*/, '').trim();
-                    if(staff) {
-                        document.getElementById('staffName').value = staff;
-                        inputsUpdated.push('staffName');
-                    }
+                    if(staff) { document.getElementById('staffName').value = staff; inputsUpdated.push('staffName'); }
                 }
             });
             
-            // ทำให้ช่องที่กรอกกระพริบสีเพื่อบอกให้ผู้ใช้รู้
             inputsUpdated.forEach(id => {
                 const el = document.getElementById(id);
                 el.classList.remove('highlight-input');
-                void el.offsetWidth; // trigger reflow
+                void el.offsetWidth;
                 el.classList.add('highlight-input');
             });
         }
@@ -287,9 +323,10 @@
 
             const btn = document.getElementById('submitBtn');
             const msg = document.getElementById('submitMsg');
+            const originalBtnHtml = btn.innerHTML;
             
             const data = {
-                action: "submit", // ระบุว่าเป็นการ submit ไม่ใช่ ocr
+                action: "submit",
                 appNo: document.getElementById('appNo').value,
                 fullName: document.getElementById('fullName').value,
                 grade: document.getElementById('grade').value,
@@ -298,7 +335,8 @@
             };
 
             btn.disabled = true;
-            btn.innerHTML = '<span class="loader"></span> กำลังบันทึก...';
+            btn.innerHTML = '<span class="loader" style="border-top-color: white;"></span> <span class="ml-2">กำลังบันทึกข้อมูล...</span>';
+            btn.classList.add('opacity-80');
             msg.className = "mt-4 text-sm font-medium hidden";
 
             try {
@@ -310,57 +348,113 @@
                 const result = await response.json();
                 
                 if(result.status === 'success') {
-                    msg.innerHTML = "✅ บันทึกข้อมูลสำเร็จ!";
-                    msg.className = "mt-4 text-sm font-medium text-green-600 block";
+                    msg.innerHTML = "🎉 บันทึกข้อมูลเรียบร้อยแล้ว!";
+                    msg.className = "mt-5 text-sm font-bold text-emerald-600 block bg-emerald-50 p-3 rounded-xl";
                     document.getElementById('regForm').reset();
-                    document.getElementById('ocrStatus').classList.add('hidden'); // ซ่อนข้อความสถานะ ocr
+                    document.getElementById('ocrStatus').classList.add('hidden');
                 } else {
                     throw new Error(result.message);
                 }
             } catch (error) {
                 msg.innerHTML = "❌ เกิดข้อผิดพลาด: " + error.message;
-                msg.className = "mt-4 text-sm font-medium text-red-600 block";
+                msg.className = "mt-5 text-sm font-bold text-red-600 block bg-red-50 p-3 rounded-xl";
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '💾 บันทึกข้อมูลการสมัคร';
+                btn.innerHTML = originalBtnHtml;
+                btn.classList.remove('opacity-80');
                 setTimeout(() => { msg.classList.add('hidden'); }, 5000);
             }
         }
 
-        // --------- ระบบ Dashboard เหมือนเดิม ---------
+        // --------- ระบบ Dashboard ---------
         let dailyChartInstance = null; let schoolChartInstance = null;
+        
+        // กำหนดตั้งค่าเริ่มต้นให้ Chart.js รองรับภาษาไทยได้ดีขึ้น
+        Chart.defaults.font.family = "'Sarabun', sans-serif";
+        Chart.defaults.color = '#64748b';
+
         async function loadDashboardData() {
             document.getElementById('loadingDash').classList.remove('hidden');
             document.getElementById('dashboardContent').classList.add('hidden');
             try {
                 const response = await fetch(GOOGLE_SCRIPT_URL);
                 const data = await response.json();
+                
+                // Animate numbers (optional enhancement)
                 document.getElementById('stat-m1').innerText = data.totalM1;
                 document.getElementById('stat-m4').innerText = data.totalM4;
                 document.getElementById('stat-total').innerText = data.totalM1 + data.totalM4;
+                
                 renderDailyChart(data.dailyStats);
                 renderSchoolChart(data.schoolStats);
+                
                 document.getElementById('loadingDash').classList.add('hidden');
                 document.getElementById('dashboardContent').classList.remove('hidden');
             } catch (error) {
-                document.getElementById('loadingDash').innerHTML = "<p class='text-red-500'>ไม่สามารถโหลดข้อมูลได้: " + error.message + "</p>";
+                document.getElementById('loadingDash').innerHTML = "<p class='text-red-500 bg-red-50 p-4 rounded-xl inline-block'>ไม่สามารถโหลดข้อมูลได้: " + error.message + "</p>";
             }
         }
+
         function renderDailyChart(dailyStats) {
             const ctx = document.getElementById('dailyChart').getContext('2d');
             const dates = Object.keys(dailyStats).sort();
             const m1Data = dates.map(date => dailyStats[date]["ม.1"] || 0);
             const m4Data = dates.map(date => dailyStats[date]["ม.4"] || 0);
             const dateLabels = dates.map(d => { const p = d.split('-'); return `${parseInt(p[2])}/${parseInt(p[1])}`; });
+            
             if(dailyChartInstance) dailyChartInstance.destroy();
-            dailyChartInstance = new Chart(ctx, { type: 'bar', data: { labels: dateLabels.length > 0 ? dateLabels : ['ไม่มีข้อมูล'], datasets: [ { label: 'ม.1', data: m1Data, backgroundColor: 'rgba(34, 197, 94, 0.7)' }, { label: 'ม.4', data: m4Data, backgroundColor: 'rgba(168, 85, 247, 0.7)' } ] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } } });
+            
+            dailyChartInstance = new Chart(ctx, { 
+                type: 'bar', 
+                data: { 
+                    labels: dateLabels.length > 0 ? dateLabels : ['ไม่มีข้อมูล'], 
+                    datasets: [ 
+                        { label: 'ม.1', data: m1Data, backgroundColor: '#3b82f6', borderRadius: 4 }, 
+                        { label: 'ม.4', data: m4Data, backgroundColor: '#ec4899', borderRadius: 4 } 
+                    ] 
+                }, 
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, // สำคัญ: ทำงานร่วมกับ relative container
+                    plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } }
+                    },
+                    scales: { 
+                        y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { borderDash: [4, 4], color: '#f1f5f9' } },
+                        x: { grid: { display: false } }
+                    } 
+                } 
+            });
         }
+
         function renderSchoolChart(schoolStats) {
             const ctx = document.getElementById('schoolChart').getContext('2d');
             const sorted = Object.entries(schoolStats).sort((a, b) => b[1] - a[1]).slice(0, 5);
-            const labels = sorted.map(i => i[0]); const data = sorted.map(i => i[1]);
+            const labels = sorted.map(i => i[0]); 
+            const data = sorted.map(i => i[1]);
+            
             if(schoolChartInstance) schoolChartInstance.destroy();
-            schoolChartInstance = new Chart(ctx, { type: 'doughnut', data: { labels: labels.length > 0 ? labels : ['ไม่มีข้อมูล'], datasets: [{ data: data.length > 0 ? data : [1], backgroundColor: ['#3b82f6', '#ef4444', '#f59e0b', '#10b981', '#6366f1'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } } });
+            
+            schoolChartInstance = new Chart(ctx, { 
+                type: 'doughnut', 
+                data: { 
+                    labels: labels.length > 0 ? labels : ['ไม่มีข้อมูล'], 
+                    datasets: [{ 
+                        data: data.length > 0 ? data : [1], 
+                        backgroundColor: ['#3b82f6', '#ec4899', '#8b5cf6', '#10b981', '#f59e0b'],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }] 
+                }, 
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, // สำคัญ: ทำงานร่วมกับ relative container
+                    cutout: '65%',
+                    plugins: { 
+                        legend: { position: 'right', labels: { usePointStyle: true, padding: 15, font: { size: 12 } } } 
+                    } 
+                } 
+            });
         }
     </script>
 </body>
