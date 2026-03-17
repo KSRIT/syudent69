@@ -54,6 +54,20 @@
     <!-- === อย่าลืมเปลี่ยน URL ตรงนี้ด้วย URL Web App ของคุณ === -->
     <script>
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxNR0ii4qExiS9LBiDyiDLJA729GXUmlhEB3iaKopaMEVZLLTUjlj7llXinkr44lpzB/exec";
+        
+        // รายชื่อโรงเรียนในเขตรับผิดชอบ (10 โรงเรียน)
+        const IN_ZONE_SCHOOLS = [
+            "โรงเรียนองค์การอุตสาหกรรมป่าไม้ 9",
+            "โรงเรียนวัดคีรีวง",
+            "โรงเรียนบ้านคอกช้าง",
+            "โรงเรียนบ้านดอนเสาธง",
+            "โรงเรียนบ้านคลองคราม",
+            "โรงเรียนบ้านเขาหัวช้าง",
+            "โรงเรียนบ้านคลองวัง",
+            "โรงเรียนบ้านใหม่สามัคคี",
+            "โรงเรียนบ้านดินแดงสามัคคี",
+            "โรงเรียนบ้านเขาพระอินทร์"
+        ];
     </script>
 
     <!-- Main Application Container -->
@@ -185,7 +199,7 @@
                         </div>
                     </div>
 
-                    <!-- 📊 Stats Cards -->
+                    <!-- 📊 Stats Cards (Main) -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div class="bg-white p-8 rounded-3xl border border-blue-50 text-center shadow-[0_4px_20px_rgba(0,0,0,0.03)] relative overflow-hidden group">
                             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-pink-500"></div>
@@ -201,6 +215,24 @@
                             <div class="absolute top-0 left-0 w-full h-1 bg-pink-500"></div>
                             <h3 class="text-slate-500 text-sm font-bold mb-3 flex justify-center items-center gap-2"><span class="text-lg">🌸</span> ยอดสมัคร ม.4</h3>
                             <p class="text-6xl font-extrabold text-pink-500 transition-transform group-hover:scale-105" id="stat-m4">0</p>
+                        </div>
+                    </div>
+
+                    <!-- 📊 Zone Stats Cards (แยกเขตรับผิดชอบ) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-teal-50 p-6 rounded-3xl border border-teal-100 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
+                            <div>
+                                <h3 class="text-teal-800 font-bold flex items-center gap-2 text-lg"><span class="text-2xl">📍</span> ในเขตพื้นที่บริการ</h3>
+                                <p class="text-sm text-teal-600 mt-1 font-medium">10 โรงเรียนในเขตรับผิดชอบ</p>
+                            </div>
+                            <p class="text-5xl font-black text-teal-600" id="stat-in-zone">0</p>
+                        </div>
+                        <div class="bg-orange-50 p-6 rounded-3xl border border-orange-100 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
+                            <div>
+                                <h3 class="text-orange-800 font-bold flex items-center gap-2 text-lg"><span class="text-2xl">🌍</span> นอกเขตพื้นที่บริการ</h3>
+                                <p class="text-sm text-orange-600 mt-1 font-medium">โรงเรียนอื่นๆ นอกเขต</p>
+                            </div>
+                            <p class="text-5xl font-black text-orange-600" id="stat-out-zone">0</p>
                         </div>
                     </div>
                     
@@ -308,9 +340,15 @@
                     </div>
 
                     <div class="flex-1 flex flex-col justify-center gap-6">
-                        <div class="bg-slate-900/60 rounded-3xl p-8 border border-slate-700 text-center transform transition-transform hover:scale-105">
+                        <div class="bg-slate-900/60 rounded-3xl p-8 border border-slate-700 text-center transform transition-transform hover:scale-105 relative">
                             <p class="text-2xl text-slate-400 font-bold mb-2">รวมยอดสะสมทั้งหมด</p>
                             <p id="tv-all-total" class="text-[7rem] leading-none font-black text-transparent bg-clip-text bg-gradient-to-br from-purple-400 to-pink-400 drop-shadow-md">0</p>
+                            
+                            <!-- เพิ่มสถิติในเขต/นอกเขต ในทีวีโหมด -->
+                            <div class="flex justify-center gap-8 mt-6 pt-4 border-t border-slate-700/50">
+                                <p class="text-lg text-slate-400 font-medium">📍 ในเขต: <span id="tv-in-zone" class="text-teal-400 font-bold text-2xl ml-1">0</span></p>
+                                <p class="text-lg text-slate-400 font-medium">🌍 นอกเขต: <span id="tv-out-zone" class="text-orange-400 font-bold text-2xl ml-1">0</span></p>
+                            </div>
                         </div>
                         
                         <div class="grid grid-cols-2 gap-6">
@@ -381,7 +419,7 @@
             });
         }
 
-        function toggleOtherInput(rowId, cb) {
+        function toggleOtherAbility(rowId, cb) {
             const input = document.getElementById(`other-ability-${rowId}`);
             if (cb.checked) {
                 input.classList.remove('hidden');
@@ -392,10 +430,27 @@
             }
         }
 
+        // ฟังก์ชันเปิด-ปิด ช่องพิมพ์ชื่อโรงเรียนเมื่อเลือก "อื่นๆ"
+        function toggleOtherSchool(rowId, selectElem) {
+            const inputElem = document.getElementById(`other-school-${rowId}`);
+            if (selectElem.value === 'other') {
+                inputElem.classList.remove('hidden');
+                inputElem.setAttribute('required', 'true');
+                inputElem.focus();
+            } else {
+                inputElem.classList.add('hidden');
+                inputElem.removeAttribute('required');
+                inputElem.value = '';
+            }
+        }
+
         function addStudentRow() {
             const container = document.getElementById('students-container');
             const rowId = `student-row-${Date.now()}`;
             
+            // สร้าง Options สำหรับโรงเรียนในเขต
+            const schoolOptions = IN_ZONE_SCHOOLS.map(school => `<option value="${school}">${school}</option>`).join('');
+
             const div = document.createElement('div');
             div.className = "student-row bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-200 relative";
             div.id = rowId;
@@ -420,9 +475,22 @@
                         <label class="block text-sm font-bold text-slate-700 mb-2">ชื่อ-นามสกุล *</label>
                         <input type="text" name="fullName" required class="modern-input bg-slate-50 focus:bg-white" placeholder="ด.ช. / ด.ญ. / นาย / นางสาว">
                     </div>
+
+                    <!-- ส่วนที่แก้ใหม่: โรงเรียนเดิม -->
                     <div class="md:col-span-3">
                         <label class="block text-sm font-bold text-slate-700 mb-2">จบจากโรงเรียนเดิม *</label>
-                        <input type="text" name="prevSchool" required class="modern-input bg-slate-50 focus:bg-white" placeholder="ระบุชื่อโรงเรียนเดิม">
+                        <div class="flex flex-col gap-3">
+                            <select name="prevSchoolSelect" required onchange="toggleOtherSchool('${rowId}', this)" class="modern-input bg-slate-50 focus:bg-white cursor-pointer border-slate-300">
+                                <option value="">-- กรุณาเลือกโรงเรียนเดิม --</option>
+                                <optgroup label="📍 โรงเรียนในเขตพื้นที่บริการ">
+                                    ${schoolOptions}
+                                </optgroup>
+                                <optgroup label="🌍 โรงเรียนนอกเขตพื้นที่บริการ">
+                                    <option value="other">✨ อื่นๆ (พิมพ์ระบุชื่อโรงเรียนเอง)</option>
+                                </optgroup>
+                            </select>
+                            <input type="text" id="other-school-${rowId}" name="prevSchoolOther" class="hidden modern-input bg-orange-50/50 border-orange-200 focus:border-orange-500" placeholder="พิมพ์ชื่อโรงเรียนเดิม (นอกเขต)...">
+                        </div>
                     </div>
 
                     <div class="md:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6 mt-2 border-t border-slate-100 pt-5">
@@ -453,7 +521,7 @@
                             
                             <div class="mt-2 pt-2 border-t border-blue-100/50 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
                                 <label class="flex items-center gap-2 cursor-pointer hover:bg-blue-50 p-1.5 rounded-lg transition-colors shrink-0">
-                                    <input type="checkbox" class="ability-cb-${rowId} w-4 h-4 text-blue-600 rounded border-blue-300 focus:ring-blue-500" value="อื่นๆ" onchange="toggleOtherInput('${rowId}', this)">
+                                    <input type="checkbox" class="ability-cb-${rowId} w-4 h-4 text-blue-600 rounded border-blue-300 focus:ring-blue-500" value="อื่นๆ" onchange="toggleOtherAbility('${rowId}', this)">
                                     <span class="text-sm font-medium text-slate-700">✨ อื่นๆ (ระบุ)</span>
                                 </label>
                                 <input type="text" id="other-ability-${rowId}" class="hidden modern-input py-1.5 px-3 text-sm w-full border-blue-200 focus:border-blue-400 bg-white" placeholder="โปรดระบุความสามารถพิเศษ...">
@@ -542,6 +610,15 @@
                 });
                 const finalAbilityStr = abilities.join(', ');
 
+                // จัดการค่าโรงเรียนเดิม
+                let prevSchoolValue = "";
+                const schoolSelect = row.querySelector('select[name="prevSchoolSelect"]').value;
+                if (schoolSelect === 'other') {
+                    prevSchoolValue = row.querySelector(`input[id="other-school-${row.id}"]`).value.trim();
+                } else {
+                    prevSchoolValue = schoolSelect;
+                }
+
                 const track = (selectedGrade === 'ม.4' && row.querySelector('select[name="m4Track"]')) ? row.querySelector('select[name="m4Track"]').value : "";
                 const oldStudentCheck = row.querySelector('input[name="isOldStudent"]');
                 const isOldStudent = (selectedGrade === 'ม.4' && oldStudentCheck && oldStudentCheck.checked) ? "นักเรียนเดิม" : (selectedGrade === 'ม.4' ? "นักเรียนใหม่" : "");
@@ -550,7 +627,7 @@
                     action: "submit", grade: selectedGrade, staffName: staffName,
                     appNo: row.querySelector('input[name="appNo"]').value,
                     fullName: row.querySelector('input[name="fullName"]').value,
-                    prevSchool: row.querySelector('input[name="prevSchool"]').value,
+                    prevSchool: prevSchoolValue,
                     ability: finalAbilityStr,
                     track: track,
                     isOldStudent: isOldStudent
@@ -585,7 +662,6 @@
 
         // ===================== Dashboard & Data Loading =====================
         async function loadDashboardData() {
-            // ไม่โชว์ loading หน้าเว็บปกติถ้ากำลังเปิดโหมดทีวีอยู่ (จะได้ไม่กระตุก)
             const isTVMode = !document.getElementById('tv-mode-container').classList.contains('hidden');
             if(!isTVMode) {
                 document.getElementById('loadingDash').classList.remove('hidden');
@@ -604,6 +680,30 @@
                 document.getElementById('stat-m4').innerText = data.totalM4 || 0;
                 document.getElementById('stat-total').innerText = (data.totalM1 || 0) + (data.totalM4 || 0);
                 
+                // คำนวณสถิติ ในเขต / นอกเขต
+                let inZoneCount = 0;
+                let outZoneCount = 0;
+                if (data.applicantsByDate) {
+                    Object.values(data.applicantsByDate).forEach(dateObj => {
+                        ['ม.1', 'ม.4'].forEach(grade => {
+                            if (dateObj[grade]) {
+                                dateObj[grade].forEach(student => {
+                                    // ถ้าตรงกับลิสต์ให้เป็นในเขต ถ้าไม่ตรงเป็นนอกเขต
+                                    if (IN_ZONE_SCHOOLS.includes(student.prevSchool)) {
+                                        inZoneCount++;
+                                    } else {
+                                        outZoneCount++;
+                                    }
+                                });
+                            }
+                        });
+                    });
+                }
+
+                // อัปเดตตัวเลขโซน
+                document.getElementById('stat-in-zone').innerText = inZoneCount;
+                document.getElementById('stat-out-zone').innerText = outZoneCount;
+                
                 if(data.dailyStats) renderDailyChart(data.dailyStats);
                 if(data.schoolStats) renderSchoolChart(data.schoolStats);
                 renderTimeline(data.applicantsByDate);
@@ -613,8 +713,8 @@
                     document.getElementById('dashboardContent').classList.remove('hidden');
                 }
 
-                // Update TV Mode Data if active
-                updateTVDataUI(data);
+                // Update TV Mode Data if active (ส่งค่า inZone/outZone ไปด้วย)
+                updateTVDataUI(data, inZoneCount, outZoneCount);
 
             } catch (e) { 
                 if(!isTVMode) document.getElementById('loadingDash').innerHTML = `<p class="text-red-500 font-bold p-4">❌ ไม่สามารถดึงข้อมูลได้: ${e.message}</p>`; 
@@ -623,8 +723,6 @@
         }
 
         // ===================== TV Mode Logic =====================
-        
-        // Start Clock for TV Mode
         function startTVClock() {
             if (clockInterval) clearInterval(clockInterval);
             const updateClock = () => {
@@ -644,17 +742,15 @@
             const mainApp = document.getElementById('main-app-container');
             
             tvContainer.classList.remove('hidden');
-            mainApp.classList.add('hidden'); // Hide main app completely
+            mainApp.classList.add('hidden'); 
             
-            // Request OS Fullscreen
             const elem = document.documentElement;
             if (elem.requestFullscreen) { elem.requestFullscreen().catch(err => console.log(err)); } 
             else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); }
 
             startTVClock();
-            loadDashboardData(); // Load fresh data immediately
+            loadDashboardData(); 
             
-            // Auto refresh every 30 seconds
             if(tvRefreshInterval) clearInterval(tvRefreshInterval);
             tvRefreshInterval = setInterval(loadDashboardData, 30000); 
         }
@@ -673,7 +769,6 @@
             if(clockInterval) clearInterval(clockInterval);
         }
 
-        // Handle Escape key to close TV mode gracefully
         document.addEventListener('fullscreenchange', (e) => {
             if (!document.fullscreenElement) {
                 if(!document.getElementById('tv-mode-container').classList.contains('hidden')){
@@ -682,20 +777,20 @@
             }
         });
 
-        // Update Numbers on TV screen
-        function updateTVDataUI(data) {
-            // All Time Stats
+        function updateTVDataUI(data, inZoneCount, outZoneCount) {
             document.getElementById('tv-all-total').textContent = (data.totalM1 || 0) + (data.totalM4 || 0);
             document.getElementById('tv-all-m1').textContent = data.totalM1 || 0;
             document.getElementById('tv-all-m4').textContent = data.totalM4 || 0;
+            
+            // อัปเดตสถิติโซนในจอทีวี
+            document.getElementById('tv-in-zone').textContent = inZoneCount || 0;
+            document.getElementById('tv-out-zone').textContent = outZoneCount || 0;
 
-            // Find Latest Day Stats
             let latestDateText = "ยังไม่มีข้อมูล";
             let tM1 = 0, tM4 = 0;
 
             if (data.dailyStats && Object.keys(data.dailyStats).length > 0) {
                 const dates = Object.keys(data.dailyStats);
-                // Sort dates robustly (assuming format DD/MM/YYYY)
                 dates.sort((a,b) => {
                     let da = a.split('/').reverse().join('');
                     let db = b.split('/').reverse().join('');
@@ -713,7 +808,6 @@
             document.getElementById('tv-today-m4').textContent = tM4;
             document.getElementById('tv-today-total').textContent = tM1 + tM4;
 
-            // Update timestamp
             const now = new Date();
             document.getElementById('tv-last-updated').textContent = `อัปเดตข้อมูลล่าสุด: ${now.toLocaleTimeString('th-TH')}`;
         }
@@ -725,7 +819,7 @@
             const dates = Object.keys(dataByDate || {}).sort((a,b)=> {
                  let da = a.split('/').reverse().join('');
                  let db = b.split('/').reverse().join('');
-                 return db.localeCompare(da); // Descending
+                 return db.localeCompare(da); 
             });
             dates.forEach(d => { select.innerHTML += `<option value="${d}">📍 เฉพาะวันที่ ${d}</option>`; });
         }
@@ -736,7 +830,7 @@
             const selectedGrade = document.getElementById('exportGradeSelect').value;
             
             let csvRows = [];
-            csvRows.push(["วันที่", "เวลา", "ระดับชั้น", "เลขที่สมัคร", "ชื่อ-นามสกุล", "โรงเรียนเดิม", "ความสามารถพิเศษ", "สายการเรียน", "สถานะนักเรียน", "ผู้รับสมัคร"]);
+            csvRows.push(["วันที่", "เวลา", "ระดับชั้น", "เลขที่สมัคร", "ชื่อ-นามสกุล", "โรงเรียนเดิม", "เขตพื้นที่บริการ", "ความสามารถพิเศษ", "สายการเรียน", "สถานะนักเรียน", "ผู้รับสมัคร"]);
 
             const datesToExport = selectedDate === 'all' ? Object.keys(globalRawData).sort() : [selectedDate];
             const gradesToExport = selectedGrade === 'all' ? ['ม.1', 'ม.4'] : [selectedGrade];
@@ -747,8 +841,9 @@
                     const students = globalRawData[date][grade] || [];
                     if(students.length > 0) hasData = true;
                     students.reverse().forEach(s => {
+                        const zoneType = IN_ZONE_SCHOOLS.includes(s.prevSchool) ? "ในเขตพื้นที่ฯ" : "นอกเขตพื้นที่ฯ";
                         csvRows.push([
-                            s.dateStr, s.time, s.grade, s.appNo, s.fullName, s.prevSchool, 
+                            s.dateStr, s.time, s.grade, s.appNo, s.fullName, s.prevSchool, zoneType,
                             s.ability || "-", s.track || "-", s.isOldStudent || "-", s.staffName
                         ]);
                     });
@@ -809,6 +904,8 @@
         function htmlItem(s, color) {
             const bgColor = color === 'blue' ? 'bg-white border-blue-100 hover:border-blue-300' : 'bg-white border-pink-100 hover:border-pink-300';
             const numColor = color === 'blue' ? 'text-blue-600 bg-blue-50' : 'text-pink-600 bg-pink-50';
+            const zoneBadge = IN_ZONE_SCHOOLS.includes(s.prevSchool) ? `<span class="text-[10px] bg-teal-100 text-teal-700 px-2 py-0.5 rounded-md font-medium">📍 ในเขต</span>` : `<span class="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-md font-medium">🌍 นอกเขต</span>`;
+
             return `
             <div class="p-4 ${bgColor} border rounded-xl text-sm shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition-colors">
                 <div class="flex justify-between items-start font-bold text-slate-700 mb-1">
@@ -817,6 +914,7 @@
                 </div>
                 <p class="text-xs text-slate-500 truncate flex items-center gap-1"><span>🏫</span> รร.เดิม: ${s.prevSchool}</p>
                 <div class="flex flex-wrap gap-1.5 mt-2.5">
+                    ${zoneBadge}
                     ${s.ability ? `<span class="text-[10px] bg-purple-100 text-purple-700 px-2 py-0.5 rounded-md font-medium">⭐ ${s.ability}</span>` : ''}
                     ${s.track ? `<span class="text-[10px] bg-teal-100 text-teal-700 px-2 py-0.5 rounded-md font-medium">📚 ${s.track}</span>` : ''}
                     ${s.isOldStudent === 'นักเรียนเดิม' ? `<span class="text-[10px] bg-pink-100 text-pink-700 px-2 py-0.5 rounded-md font-medium">🏫 เด็กเก่า</span>` : ''}
