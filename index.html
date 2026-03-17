@@ -37,6 +37,16 @@
             50% { text-shadow: 0 0 40px rgba(59, 130, 246, 0.8), 0 0 10px rgba(255,255,255,0.5); }
         }
         .animate-glow { animation: pulse-glow 3s infinite; }
+
+        /* Grade Selection Highlight Styles */
+        .grade-radio:checked + .grade-option {
+            background-color: var(--active-bg);
+            border-color: var(--active-color);
+            box-shadow: 0 4px 15px var(--shadow-color);
+        }
+        .grade-radio:checked + .grade-option span {
+            color: var(--active-color);
+        }
     </style>
 </head>
 <body class="min-h-screen p-4 md:p-8 flex justify-center items-start">
@@ -99,16 +109,18 @@
                                     <span>🏫</span> เลือกระดับชั้นที่กำลังบันทึก
                                 </label>
                                 <div class="grid grid-cols-2 gap-4 mt-1">
-                                    <label class="cursor-pointer relative" style="--active-color: #2563eb; --active-bg: #eff6ff; --shadow-color: rgba(37, 99, 235, 0.15);">
+                                    <!-- ม.1 สีชมพู -->
+                                    <label class="cursor-pointer relative block" style="--active-color: #db2777; --active-bg: #fdf2f8; --shadow-color: rgba(219, 39, 119, 0.15);">
                                         <input type="radio" name="globalGrade" value="ม.1" checked onchange="updateFormDisplay()" class="grade-radio peer sr-only">
-                                        <div class="grade-option rounded-xl border-2 border-slate-200 px-4 py-3 hover:bg-slate-50 flex items-center justify-center gap-2 bg-white">
-                                            <span class="font-bold text-slate-400 text-lg">ม.1</span>
+                                        <div class="grade-option rounded-xl border-2 border-slate-200 px-4 py-3 hover:bg-slate-50 flex items-center justify-center gap-2 bg-white transition-all duration-200">
+                                            <span class="font-bold text-slate-400 text-lg transition-colors">ม.1</span>
                                         </div>
                                     </label>
-                                    <label class="cursor-pointer relative" style="--active-color: #db2777; --active-bg: #fdf2f8; --shadow-color: rgba(219, 39, 119, 0.15);">
+                                    <!-- ม.4 สีน้ำเงิน -->
+                                    <label class="cursor-pointer relative block" style="--active-color: #2563eb; --active-bg: #eff6ff; --shadow-color: rgba(37, 99, 235, 0.15);">
                                         <input type="radio" name="globalGrade" value="ม.4" onchange="updateFormDisplay()" class="grade-radio peer sr-only">
-                                        <div class="grade-option rounded-xl border-2 border-slate-200 px-4 py-3 hover:bg-slate-50 flex items-center justify-center gap-2 bg-white">
-                                            <span class="font-bold text-slate-400 text-lg">ม.4</span>
+                                        <div class="grade-option rounded-xl border-2 border-slate-200 px-4 py-3 hover:bg-slate-50 flex items-center justify-center gap-2 bg-white transition-all duration-200">
+                                            <span class="font-bold text-slate-400 text-lg transition-colors">ม.4</span>
                                         </div>
                                     </label>
                                 </div>
@@ -129,7 +141,7 @@
                         <div id="progressContainer" class="absolute top-0 left-0 w-full h-1.5 bg-slate-100 hidden">
                             <div id="progressBar" class="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 w-0 transition-all duration-300"></div>
                         </div>
-                        <button type="submit" id="submitBtn" class="bg-gradient-to-r from-blue-700 to-blue-600 hover:from-blue-800 hover:to-blue-700 text-white font-bold py-4 px-12 rounded-2xl shadow-[0_8px_20px_rgba(29,78,216,0.25)] transition-all duration-300 hover:-translate-y-1 w-full md:w-auto text-lg flex items-center justify-center mx-auto gap-3">
+                        <button type="submit" id="submitBtn" class="bg-gradient-to-r from-pink-600 to-pink-500 hover:from-pink-700 hover:to-pink-600 text-white font-bold py-4 px-12 rounded-2xl shadow-[0_8px_20px_rgba(219,39,119,0.25)] transition-all duration-300 hover:-translate-y-1 w-full md:w-auto text-lg flex items-center justify-center mx-auto gap-3">
                             <span>💾</span> <span id="submitBtnText">บันทึกข้อมูล ม.1 ลงระบบ</span>
                         </button>
                         <div id="submitMsg" class="mt-4 text-sm font-medium hidden"></div>
@@ -347,10 +359,11 @@
             
             btnText.innerText = `บันทึกข้อมูล ${grade} ลงระบบ`;
             
+            // สลับสีปุ่มบันทึก: ม.1 สีชมพู, ม.4 สีน้ำเงิน
             if (grade === 'ม.4') {
-                btn.className = "bg-gradient-to-r from-pink-600 to-pink-500 hover:from-pink-700 hover:to-pink-600 text-white font-bold py-4 px-12 rounded-2xl shadow-[0_8px_20px_rgba(219,39,119,0.25)] transition-all duration-300 hover:-translate-y-1 w-full md:w-auto text-lg flex items-center justify-center mx-auto gap-3";
-            } else {
                 btn.className = "bg-gradient-to-r from-blue-700 to-blue-600 hover:from-blue-800 hover:to-blue-700 text-white font-bold py-4 px-12 rounded-2xl shadow-[0_8px_20px_rgba(29,78,216,0.25)] transition-all duration-300 hover:-translate-y-1 w-full md:w-auto text-lg flex items-center justify-center mx-auto gap-3";
+            } else {
+                btn.className = "bg-gradient-to-r from-pink-600 to-pink-500 hover:from-pink-700 hover:to-pink-600 text-white font-bold py-4 px-12 rounded-2xl shadow-[0_8px_20px_rgba(219,39,119,0.25)] transition-all duration-300 hover:-translate-y-1 w-full md:w-auto text-lg flex items-center justify-center mx-auto gap-3";
             }
 
             document.querySelectorAll('.m4-only-section').forEach(sec => {
@@ -619,7 +632,6 @@
                 const timeOpts = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
                 const dateOpts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
                 document.getElementById('tv-clock-time').textContent = now.toLocaleTimeString('th-TH', timeOpts);
-                // convert year manually for pure Thai format if needed, but toLocaleDateString usually works
                 let dateStr = now.toLocaleDateString('th-TH', dateOpts);
                 document.getElementById('tv-clock-date').textContent = dateStr;
             };
@@ -664,7 +676,6 @@
         // Handle Escape key to close TV mode gracefully
         document.addEventListener('fullscreenchange', (e) => {
             if (!document.fullscreenElement) {
-                // User pressed Esc or exited fullscreen via browser UI
                 if(!document.getElementById('tv-mode-container').classList.contains('hidden')){
                     closeTVMode();
                 }
@@ -707,7 +718,7 @@
             document.getElementById('tv-last-updated').textContent = `อัปเดตข้อมูลล่าสุด: ${now.toLocaleTimeString('th-TH')}`;
         }
 
-        // ===================== Export & Charts (เหมือนเดิม) =====================
+        // ===================== Export & Charts =====================
         function populateExportSelect(dataByDate) {
             const select = document.getElementById('exportDateSelect');
             select.innerHTML = '<option value="all">📅 ทุกวันที่รับสมัคร (ทั้งหมด)</option>';
