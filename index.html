@@ -232,6 +232,8 @@
         let globalRawData = {}; 
         let tvRefreshInterval = null;
         let clockInterval = null;
+        let dailyChartInstance = null; // เพิ่มบรรทัดนี้เพื่อแก้ error
+        let schoolChartInstance = null; // เพิ่มบรรทัดนี้เพื่อแก้ error
 
         document.addEventListener('DOMContentLoaded', () => { addStudentRow(); updateFormDisplay(); });
 
@@ -301,8 +303,7 @@
                             <div class="bg-pink-50/50 p-4 rounded-2xl border border-pink-100">
                                 <label class="block text-sm font-bold text-pink-900 mb-2">📚 สายการเรียน (ม.4) *</label>
                                 <select name="m4Track" class="modern-input bg-white text-sm">
-                                    <option value="">-- เลือกสายการเรียน --</option><option value="วิทย์-คณิต">วิทย์-คณิต</option><option value="ศิลป์-คำนวณ">ศิลป์-คำนวณ</option>
-                                    <option value="ศิลป์-ภาษา">ศิลป์-ภาษา</option><option value="เตรียมวิศวกรรมศาสตร์">เตรียมวิศวกรรมศาสตร์</option>
+                                    <option value="">-- เลือกสายการเรียน --</option><option <option value="เตรียมวิศวกรรมศาสตร์">เตรียมวิศวกรรมศาสตร์</option>
                                     <option value="นวัตกรรมการจัดการเกษตร">นวัตกรรมการจัดการเกษตร</option><option value="ภาษาอังกฤษเพื่อการสื่อสารธุรกิจ">ภาษาอังกฤษเพื่อการสื่อสารธุรกิจ</option>
                                     <option value="การจัดการธุรกิจอาหาร">การจัดการธุรกิจอาหาร</option>
                                 </select>
