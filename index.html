@@ -9,163 +9,97 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap');
         body { font-family: 'Sarabun', sans-serif; background-color: #f0f9ff; }
-        
-        /* Custom Tab Styles */
         .tab-active { border-bottom: 3px solid #db2777; color: #db2777; font-weight: 700; }
         .tab-inactive { color: #475569; font-weight: 500; }
         .tab-inactive:hover { color: #2563eb; }
-        
         .loader { border: 3px solid #e0f2fe; border-top: 3px solid #ec4899; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* Custom Input styling */
-        .modern-input {
-            width: 100%; padding: 0.75rem 1rem; border: 1.5px solid #e2e8f0; border-radius: 0.75rem;
-            transition: all 0.3s; outline: none; background-color: #ffffff; font-size: 0.95rem; color: #1e293b;
-        }
+        .modern-input { width: 100%; padding: 0.75rem 1rem; border: 1.5px solid #e2e8f0; border-radius: 0.75rem; transition: all 0.3s; outline: none; background-color: #ffffff; font-size: 0.95rem; color: #1e293b; }
         .modern-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
-        
-        /* Custom Scrollbar */
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #64748b; }
-        
-        /* TV Mode Animations */
-        @keyframes pulse-glow {
-            0%, 100% { text-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
-            50% { text-shadow: 0 0 40px rgba(59, 130, 246, 0.8), 0 0 10px rgba(255,255,255,0.5); }
-        }
+        @keyframes pulse-glow { 0%, 100% { text-shadow: 0 0 20px rgba(59, 130, 246, 0.5); } 50% { text-shadow: 0 0 40px rgba(59, 130, 246, 0.8), 0 0 10px rgba(255,255,255,0.5); } }
         .animate-glow { animation: pulse-glow 3s infinite; }
-
-        /* Grade Selection Highlight Styles */
-        .grade-radio:checked + .grade-option {
-            background-color: var(--active-bg);
-            border-color: var(--active-color);
-            box-shadow: 0 4px 15px var(--shadow-color);
-        }
-        .grade-radio:checked + .grade-option span {
-            color: var(--active-color);
-        }
+        .grade-radio:checked + .grade-option { background-color: var(--active-bg); border-color: var(--active-color); box-shadow: 0 4px 15px var(--shadow-color); }
+        .grade-radio:checked + .grade-option span { color: var(--active-color); }
     </style>
 </head>
 <body class="min-h-screen p-4 md:p-8 flex justify-center items-start">
 
-    <!-- === อย่าลืมเปลี่ยน URL ตรงนี้ด้วย URL Web App ของคุณ === -->
     <script>
+        // === เปลี่ยน URL Web App ที่นี่ ===
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxNR0ii4qExiS9LBiDyiDLJA729GXUmlhEB3iaKopaMEVZLLTUjlj7llXinkr44lpzB/exec";
         
-        // รายชื่อโรงเรียนในเขตรับผิดชอบ (10 โรงเรียน)
         const IN_ZONE_SCHOOLS = [
-            "โรงเรียนองค์การอุตสาหกรรมป่าไม้ 9",
-            "โรงเรียนวัดคีรีวง",
-            "โรงเรียนบ้านคอกช้าง",
-            "โรงเรียนบ้านดอนเสาธง",
-            "โรงเรียนบ้านคลองคราม",
-            "โรงเรียนบ้านเขาหัวช้าง",
-            "โรงเรียนบ้านคลองวัง",
-            "โรงเรียนบ้านใหม่สามัคคี",
-            "โรงเรียนบ้านดินแดงสามัคคี",
-            "โรงเรียนบ้านเขาพระอินทร์"
+            "โรงเรียนองค์การอุตสาหกรรมป่าไม้ 9", "โรงเรียนวัดคีรีวง", "โรงเรียนบ้านคอกช้าง", "โรงเรียนบ้านดอนเสาธง",
+            "โรงเรียนบ้านคลองคราม", "โรงเรียนบ้านเขาหัวช้าง", "โรงเรียนบ้านคลองวัง", "โรงเรียนบ้านใหม่สามัคคี",
+            "โรงเรียนบ้านดินแดงสามัคคี", "โรงเรียนบ้านเขาพระอินทร์"
         ];
     </script>
 
-    <!-- Main Application Container -->
     <div id="main-app-container" class="w-full max-w-5xl bg-white rounded-[2rem] shadow-[0_10px_40px_rgba(30,58,138,0.08)] overflow-hidden border border-blue-50 transition-all duration-300">
         
-        <!-- Header Gradient -->
         <div class="bg-gradient-to-r from-blue-900 via-blue-600 to-pink-500 text-white p-10 text-center relative overflow-hidden">
             <div class="absolute top-0 right-0 -mt-10 -mr-10 w-48 h-48 bg-white opacity-10 rounded-full blur-2xl"></div>
             <div class="absolute bottom-0 left-0 -mb-10 -ml-10 w-32 h-32 bg-pink-300 opacity-20 rounded-full blur-xl"></div>
-            <div class="flex justify-center items-center gap-3 mb-2 relative z-10">
-                <span class="text-4xl">🎓</span>
-                <h1 class="text-3xl md:text-4xl font-bold tracking-tight">ระบบรับสมัครนักเรียน</h1>
-            </div>
+            <div class="flex justify-center items-center gap-3 mb-2 relative z-10"><span class="text-4xl">🎓</span><h1 class="text-3xl md:text-4xl font-bold tracking-tight">ระบบรับสมัครนักเรียน</h1></div>
             <p class="text-lg text-blue-100 font-medium relative z-10">โรงเรียนปากแพรกวิทยาคม</p>
         </div>
 
-        <!-- Navigation Tabs -->
         <div class="flex border-b border-slate-100 px-6 md:px-10 pt-6 bg-white justify-between items-end">
             <div class="flex">
-                <button onclick="switchTab('form')" id="tab-form" class="pb-4 px-4 tab-active focus:outline-none text-lg transition-colors duration-200">
-                    <span class="flex items-center gap-2">📝 ฟอร์มบันทึกข้อมูล</span>
-                </button>
-                <button onclick="switchTab('dashboard')" id="tab-dashboard" class="pb-4 px-4 tab-inactive focus:outline-none text-lg ml-2 md:ml-6 transition-colors duration-200">
-                    <span class="flex items-center gap-2">📊 แดชบอร์ด & รายงาน</span>
-                </button>
+                <button onclick="switchTab('form')" id="tab-form" class="pb-4 px-4 tab-active focus:outline-none text-lg transition-colors duration-200">📝 ฟอร์มบันทึกข้อมูล</button>
+                <button onclick="switchTab('dashboard')" id="tab-dashboard" class="pb-4 px-4 tab-inactive focus:outline-none text-lg ml-2 md:ml-6 transition-colors duration-200">📊 แดชบอร์ด & รายงาน</button>
             </div>
-            
-            <!-- ปุ่มเข้าโหมดทีวี (แสดงเฉพาะตอนอยู่หน้าแดชบอร์ด) -->
-            <button id="btn-enter-tv" onclick="openTVMode()" class="hidden mb-3 bg-slate-900 hover:bg-black text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg transition-transform hover:scale-105 flex items-center gap-2 border border-slate-700">
-                <span class="text-lg">📺</span> แสดงเต็มจอ
-            </button>
+            <button id="btn-enter-tv" onclick="openTVMode()" class="hidden mb-3 bg-slate-900 hover:bg-black text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg transition-transform hover:scale-105 flex items-center gap-2 border border-slate-700">📺 แสดงเต็มจอ</button>
         </div>
 
         <div class="p-6 md:p-10 bg-blue-50/30">
             
-            <!-- ===================== ส่วนที่ 1: ฟอร์มรับสมัคร ===================== -->
             <div id="section-form" class="block animate-fade-in">
-                
                 <form id="regForm" onsubmit="submitForm(event)" class="max-w-4xl mx-auto">
-                    <!-- Global Info Card -->
                     <div class="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-blue-100 mb-8 relative overflow-hidden">
                         <div class="absolute right-0 top-0 w-40 h-40 bg-gradient-to-bl from-blue-100 to-transparent rounded-bl-full opacity-60 z-0"></div>
                         <div class="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                             <div>
-                                <label class="block text-sm font-bold text-blue-900 mb-2 flex items-center gap-2">
-                                    <span>👤</span> ชื่อผู้รับสมัคร (ครู/เจ้าหน้าที่) <span class="text-pink-500">*</span>
-                                </label>
+                                <label class="block text-sm font-bold text-blue-900 mb-2">👤 ชื่อผู้รับสมัคร (ครู/เจ้าหน้าที่) *</label>
                                 <input type="text" id="staffName" required placeholder="เช่น ครูสมปอง มุ่งมั่น" class="modern-input">
                             </div>
-
                             <div>
-                                <label class="block text-sm font-bold text-blue-900 mb-2 flex items-center gap-2">
-                                    <span>🏫</span> เลือกระดับชั้นที่กำลังบันทึก
-                                </label>
+                                <label class="block text-sm font-bold text-blue-900 mb-2">🏫 เลือกระดับชั้นที่กำลังบันทึก</label>
                                 <div class="grid grid-cols-2 gap-4 mt-1">
-                                    <!-- ม.1 สีชมพู -->
                                     <label class="cursor-pointer relative block" style="--active-color: #db2777; --active-bg: #fdf2f8; --shadow-color: rgba(219, 39, 119, 0.15);">
                                         <input type="radio" name="globalGrade" value="ม.1" checked onchange="updateFormDisplay()" class="grade-radio peer sr-only">
-                                        <div class="grade-option rounded-xl border-2 border-slate-200 px-4 py-3 hover:bg-slate-50 flex items-center justify-center gap-2 bg-white transition-all duration-200">
-                                            <span class="font-bold text-slate-400 text-lg transition-colors">ม.1</span>
-                                        </div>
+                                        <div class="grade-option rounded-xl border-2 border-slate-200 px-4 py-3 hover:bg-slate-50 flex items-center justify-center gap-2 bg-white transition-all duration-200"><span class="font-bold text-slate-400 text-lg transition-colors">ม.1</span></div>
                                     </label>
-                                    <!-- ม.4 สีน้ำเงิน -->
                                     <label class="cursor-pointer relative block" style="--active-color: #2563eb; --active-bg: #eff6ff; --shadow-color: rgba(37, 99, 235, 0.15);">
                                         <input type="radio" name="globalGrade" value="ม.4" onchange="updateFormDisplay()" class="grade-radio peer sr-only">
-                                        <div class="grade-option rounded-xl border-2 border-slate-200 px-4 py-3 hover:bg-slate-50 flex items-center justify-center gap-2 bg-white transition-all duration-200">
-                                            <span class="font-bold text-slate-400 text-lg transition-colors">ม.4</span>
-                                        </div>
+                                        <div class="grade-option rounded-xl border-2 border-slate-200 px-4 py-3 hover:bg-slate-50 flex items-center justify-center gap-2 bg-white transition-all duration-200"><span class="font-bold text-slate-400 text-lg transition-colors">ม.4</span></div>
                                     </label>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Container ใส่รายชื่อนักเรียน -->
                     <div id="students-container" class="space-y-6"></div>
 
-                    <!-- ปุ่มเพิ่มคน -->
                     <button type="button" onclick="addStudentRow()" class="w-full py-4 border-2 border-dashed border-blue-300 rounded-2xl text-blue-600 font-bold hover:bg-blue-50 transition-colors flex items-center justify-center gap-2 mt-6 mb-8 bg-white">
-                        <span>➕</span> เพิ่มข้อมูลนักเรียนคนที่ <span id="next-student-num">2</span>
+                        ➕ เพิ่มข้อมูลนักเรียนคนที่ <span id="next-student-num">2</span>
                     </button>
                     
-                    <!-- Submit Section -->
                     <div class="bg-white p-8 rounded-3xl shadow-lg border border-blue-50 text-center relative overflow-hidden">
-                        <div id="progressContainer" class="absolute top-0 left-0 w-full h-1.5 bg-slate-100 hidden">
-                            <div id="progressBar" class="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 w-0 transition-all duration-300"></div>
-                        </div>
-                        <button type="submit" id="submitBtn" class="bg-gradient-to-r from-pink-600 to-pink-500 hover:from-pink-700 hover:to-pink-600 text-white font-bold py-4 px-12 rounded-2xl shadow-[0_8px_20px_rgba(219,39,119,0.25)] transition-all duration-300 hover:-translate-y-1 w-full md:w-auto text-lg flex items-center justify-center mx-auto gap-3">
-                            <span>💾</span> <span id="submitBtnText">บันทึกข้อมูล ม.1 ลงระบบ</span>
+                        <div id="progressContainer" class="absolute top-0 left-0 w-full h-1.5 bg-slate-100 hidden"><div id="progressBar" class="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 w-0 transition-all duration-300"></div></div>
+                        <button type="submit" id="submitBtn" class="bg-gradient-to-r from-pink-600 to-pink-500 hover:from-pink-700 text-white font-bold py-4 px-12 rounded-2xl shadow-[0_8px_20px_rgba(219,39,119,0.25)] transition-all duration-300 hover:-translate-y-1 w-full md:w-auto text-lg flex items-center justify-center mx-auto gap-3">
+                            💾 <span id="submitBtnText">บันทึกข้อมูล ม.1 ลงระบบ</span>
                         </button>
                         <div id="submitMsg" class="mt-4 text-sm font-medium hidden"></div>
                     </div>
                 </form>
             </div>
 
-            <!-- ===================== ส่วนที่ 2: แดชบอร์ด ===================== -->
             <div id="section-dashboard" class="hidden animate-fade-in">
-                
                 <div id="loadingDash" class="bg-white rounded-3xl p-16 text-center shadow-sm border border-slate-100 hidden">
                     <div class="loader mb-4 w-10 h-10 border-4 border-blue-100 border-top-blue-600"></div>
                     <p class="text-blue-600 font-bold mt-2 text-lg">กำลังประมวลผลข้อมูล...</p>
@@ -173,88 +107,74 @@
                 
                 <div id="dashboardContent" class="hidden space-y-8">
                     
-                    <!-- 📥 แถบ Export ข้อมูล -->
-                    <div class="bg-gradient-to-br from-blue-900 to-blue-800 p-6 md:p-8 rounded-3xl shadow-xl flex flex-col lg:flex-row justify-between items-center gap-6 border border-blue-700 relative overflow-hidden">
-                        <div class="absolute right-0 bottom-0 opacity-10 pointer-events-none text-9xl translate-y-1/4 translate-x-1/4">📊</div>
-                        
-                        <div class="text-center lg:text-left relative z-10">
-                            <h3 class="font-bold text-white text-2xl flex items-center justify-center lg:justify-start gap-3">
-                                <span class="bg-blue-700/50 p-2.5 rounded-xl shadow-inner text-xl">📥</span> ส่งออกข้อมูล (Export)
-                            </h3>
-                            <p class="text-blue-200 text-sm mt-2 font-medium">เลือกดาวน์โหลดไฟล์ Excel/CSV ตามวันที่และระดับชั้น</p>
-                        </div>
-                        
-                        <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto relative z-10">
-                            <select id="exportGradeSelect" class="modern-input border-blue-600 bg-blue-950/50 text-white focus:border-pink-500 py-3 px-4 rounded-xl backdrop-blur-sm cursor-pointer hover:bg-blue-900/50 transition">
-                                <option value="all">📚 ทุกระดับชั้น</option>
-                                <option value="ม.1">📘 เฉพาะ ม.1</option>
-                                <option value="ม.4">🌸 เฉพาะ ม.4</option>
-                            </select>
-                            <select id="exportDateSelect" class="modern-input border-blue-600 bg-blue-950/50 text-white focus:border-pink-500 py-3 px-4 rounded-xl backdrop-blur-sm cursor-pointer hover:bg-blue-900/50 transition">
-                                <option value="all">📅 ทุกวันที่รับสมัคร (ทั้งหมด)</option>
-                            </select>
-                            <button onclick="exportToCSV()" class="bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-400 hover:to-pink-500 text-white font-bold px-8 py-3 rounded-xl shadow-[0_4px_15px_rgba(236,72,153,0.4)] whitespace-nowrap transition-all active:scale-95 flex items-center justify-center gap-2 border border-pink-400">
-                                <span>ดาวน์โหลด</span> ⬇️
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- 📊 Stats Cards (Main) -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="bg-white p-8 rounded-3xl border border-blue-50 text-center shadow-[0_4px_20px_rgba(0,0,0,0.03)] relative overflow-hidden group">
-                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-pink-500"></div>
-                            <h3 class="text-slate-500 text-sm font-bold mb-3 flex justify-center items-center gap-2"><span class="text-lg">📈</span> ยอดสมัครรวมทั้งหมด</h3>
-                            <p class="text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-pink-500 transition-transform group-hover:scale-105" id="stat-total">0</p>
-                        </div>
-                        <div class="bg-white p-8 rounded-3xl border border-blue-50 text-center shadow-[0_4px_20px_rgba(0,0,0,0.03)] relative overflow-hidden group">
-                            <div class="absolute top-0 left-0 w-full h-1 bg-blue-500"></div>
-                            <h3 class="text-slate-500 text-sm font-bold mb-3 flex justify-center items-center gap-2"><span class="text-lg">📘</span> ยอดสมัคร ม.1</h3>
-                            <p class="text-6xl font-extrabold text-blue-600 transition-transform group-hover:scale-105" id="stat-m1">0</p>
-                        </div>
-                        <div class="bg-white p-8 rounded-3xl border border-blue-50 text-center shadow-[0_4px_20px_rgba(0,0,0,0.03)] relative overflow-hidden group">
-                            <div class="absolute top-0 left-0 w-full h-1 bg-pink-500"></div>
-                            <h3 class="text-slate-500 text-sm font-bold mb-3 flex justify-center items-center gap-2"><span class="text-lg">🌸</span> ยอดสมัคร ม.4</h3>
-                            <p class="text-6xl font-extrabold text-pink-500 transition-transform group-hover:scale-105" id="stat-m4">0</p>
-                        </div>
-                    </div>
-
-                    <!-- 📊 Zone Stats Cards (แยกเขตรับผิดชอบ) -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-teal-50 p-6 rounded-3xl border border-teal-100 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
-                            <div>
-                                <h3 class="text-teal-800 font-bold flex items-center gap-2 text-lg"><span class="text-2xl">📍</span> ในเขตพื้นที่บริการ</h3>
-                                <p class="text-sm text-teal-600 mt-1 font-medium">10 โรงเรียนในเขตรับผิดชอบ</p>
+                        
+                        <div class="bg-gradient-to-br from-blue-900 to-blue-800 p-6 rounded-3xl shadow-xl border border-blue-700 flex flex-col justify-between">
+                            <div class="mb-4">
+                                <h3 class="font-bold text-white text-xl">📥 ส่งออกตาราง Excel/CSV</h3>
+                                <p class="text-blue-200 text-xs mt-1">เลือกวันที่และระดับชั้นเพื่อโหลดตาราง</p>
                             </div>
+                            <div class="flex flex-col gap-2">
+                                <div class="flex gap-2">
+                                    <select id="exportGradeSelect" class="modern-input w-1/2 border-blue-600 bg-blue-950/50 text-white py-2 px-3 rounded-xl text-sm"><option value="all">📚 ทุกชั้น</option><option value="ม.1">📘 ม.1</option><option value="ม.4">🌸 ม.4</option></select>
+                                    <select id="exportDateSelect" class="modern-input w-1/2 border-blue-600 bg-blue-950/50 text-white py-2 px-3 rounded-xl text-sm"><option value="all">📅 ทุกวัน</option></select>
+                                </div>
+                                <button onclick="exportToCSV()" class="bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-400 text-white font-bold px-4 py-2.5 rounded-xl shadow-lg transition-transform active:scale-95 w-full">ดาวน์โหลดตาราง ⬇️</button>
+                            </div>
+                        </div>
+
+                        <div class="bg-gradient-to-br from-indigo-900 to-purple-800 p-6 rounded-3xl shadow-xl border border-indigo-700 flex flex-col justify-between relative overflow-hidden">
+                            <div class="absolute right-0 bottom-0 opacity-20 text-8xl translate-y-1/4 translate-x-1/4 pointer-events-none">🖼️</div>
+                            <div class="mb-4 relative z-10">
+                                <h3 class="font-bold text-white text-xl">🎨 สร้างกราฟิกสรุปยอดตาราง</h3>
+                                <p class="text-indigo-200 text-xs mt-1">สรุปข้อมูลลงตาราง 5 วันและยอดรวมอัตโนมัติ</p>
+                            </div>
+                            <div class="flex flex-col gap-2 relative z-10 justify-end h-full">
+                                <button id="btnGenerateGraphic" onclick="exportToGraphic()" class="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 text-white font-bold px-4 py-3 rounded-xl shadow-lg transition-transform active:scale-95 w-full flex justify-center items-center gap-2">
+                                    <span id="graphicBtnText">🪄 ดึงข้อมูลลงตารางและดาวน์โหลดรูป</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white p-8 rounded-3xl border border-blue-50 text-center shadow-[0_4px_20px_rgba(0,0,0,0.03)] relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-pink-500"></div>
+                            <h3 class="text-slate-500 text-sm font-bold mb-3">📈 ยอดสมัครรวมทั้งหมด</h3>
+                            <p class="text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-pink-500" id="stat-total">0</p>
+                        </div>
+                        <div class="bg-white p-8 rounded-3xl border border-blue-50 text-center shadow-[0_4px_20px_rgba(0,0,0,0.03)] relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-blue-500"></div>
+                            <h3 class="text-slate-500 text-sm font-bold mb-3">📘 ยอดสมัคร ม.1</h3>
+                            <p class="text-6xl font-extrabold text-blue-600" id="stat-m1">0</p>
+                        </div>
+                        <div class="bg-white p-8 rounded-3xl border border-blue-50 text-center shadow-[0_4px_20px_rgba(0,0,0,0.03)] relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-pink-500"></div>
+                            <h3 class="text-slate-500 text-sm font-bold mb-3">🌸 ยอดสมัคร ม.4</h3>
+                            <p class="text-6xl font-extrabold text-pink-500" id="stat-m4">0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-teal-50 p-6 rounded-3xl border border-teal-100 flex justify-between items-center shadow-sm">
+                            <div><h3 class="text-teal-800 font-bold text-lg">📍 ในเขตพื้นที่บริการ</h3><p class="text-sm text-teal-600 mt-1">10 โรงเรียนในเขต</p></div>
                             <p class="text-5xl font-black text-teal-600" id="stat-in-zone">0</p>
                         </div>
-                        <div class="bg-orange-50 p-6 rounded-3xl border border-orange-100 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
-                            <div>
-                                <h3 class="text-orange-800 font-bold flex items-center gap-2 text-lg"><span class="text-2xl">🌍</span> นอกเขตพื้นที่บริการ</h3>
-                                <p class="text-sm text-orange-600 mt-1 font-medium">โรงเรียนอื่นๆ นอกเขต</p>
-                            </div>
+                        <div class="bg-orange-50 p-6 rounded-3xl border border-orange-100 flex justify-between items-center shadow-sm">
+                            <div><h3 class="text-orange-800 font-bold text-lg">🌍 นอกเขตพื้นที่บริการ</h3><p class="text-sm text-orange-600 mt-1">โรงเรียนอื่นๆ</p></div>
                             <p class="text-5xl font-black text-orange-600" id="stat-out-zone">0</p>
                         </div>
                     </div>
                     
-                    <!-- 📉 Charts -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-white p-8 border border-blue-50 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
-                            <h3 class="text-lg font-bold text-blue-900 mb-6 text-center flex items-center justify-center gap-2"><span>📅</span> สถิติผู้สมัครรายวัน</h3>
-                            <div class="relative h-72 w-full"><canvas id="dailyChart"></canvas></div>
-                        </div>
-                        <div class="bg-white p-8 border border-blue-50 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
-                            <h3 class="text-lg font-bold text-blue-900 mb-6 text-center flex items-center justify-center gap-2"><span>🏫</span> สถิติโรงเรียนเดิม (Top 5)</h3>
-                            <div class="relative h-72 w-full"><canvas id="schoolChart"></canvas></div>
-                        </div>
+                        <div class="bg-white p-8 border border-blue-50 rounded-3xl shadow-sm"><h3 class="text-lg font-bold text-blue-900 mb-6 text-center">📅 สถิติผู้สมัครรายวัน</h3><div class="relative h-72"><canvas id="dailyChart"></canvas></div></div>
+                        <div class="bg-white p-8 border border-blue-50 rounded-3xl shadow-sm"><h3 class="text-lg font-bold text-blue-900 mb-6 text-center">🏫 สถิติโรงเรียนเดิม (Top 5)</h3><div class="relative h-72"><canvas id="schoolChart"></canvas></div></div>
                     </div>
 
-                    <!-- 📜 Timeline Grouped by Date -->
-                    <div class="bg-white rounded-3xl p-8 border border-blue-50 shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
+                    <div class="bg-white rounded-3xl p-8 border border-blue-50 shadow-sm">
                         <div class="flex justify-between items-center border-b-2 border-slate-100 pb-4 mb-6">
-                            <h3 class="text-xl font-bold text-blue-900 flex items-center gap-2"><span>📑</span> ข้อมูลผู้สมัครเรียงตามวัน</h3>
-                            <button onclick="loadDashboardData()" class="text-sm font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 py-2.5 px-5 rounded-xl transition-colors flex items-center gap-2">
-                                <span>🔄</span> รีเฟรชข้อมูล
-                            </button>
+                            <h3 class="text-xl font-bold text-blue-900">📑 ข้อมูลผู้สมัครเรียงตามวัน</h3>
+                            <button onclick="loadDashboardData()" class="text-sm font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 py-2.5 px-5 rounded-xl transition-colors">🔄 รีเฟรช</button>
                         </div>
                         <div id="applicants-timeline" class="space-y-6"></div>
                     </div>
@@ -264,191 +184,84 @@
         </div>
     </div>
 
-    <!-- ===================== ส่วนที่ 3: Fullscreen TV Mode ===================== -->
+    <!-- ส่วน TV Mode คงเดิม -->
     <div id="tv-mode-container" class="hidden fixed inset-0 z-[9999] bg-[#0f172a] text-white flex flex-col overflow-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-800 via-[#0f172a] to-black">
-        
-        <!-- Background Elements -->
         <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-20">
             <div class="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-blue-600 blur-[120px]"></div>
             <div class="absolute top-[60%] -right-[10%] w-[40%] h-[50%] rounded-full bg-pink-600 blur-[120px]"></div>
         </div>
-
-        <!-- TV Header -->
         <div class="relative z-10 flex justify-between items-center p-8 border-b border-slate-800/50 bg-slate-900/50 backdrop-blur-md">
-            <div class="flex items-center gap-6">
-                <span class="text-6xl drop-shadow-lg">🎓</span>
-                <div>
-                    <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-pink-400">ระบบรับสมัครนักเรียน</h1>
-                    <p class="text-xl text-slate-400 font-medium mt-1">โรงเรียนปากแพรกวิทยาคม</p>
-                </div>
-            </div>
-            <div class="text-right flex items-center gap-8">
-                <div class="text-right">
-                    <p id="tv-clock-date" class="text-lg text-slate-400 font-medium"></p>
-                    <p id="tv-clock-time" class="text-5xl font-bold font-mono tracking-wider animate-glow"></p>
-                </div>
-                <button onclick="closeTVMode()" class="bg-slate-800 hover:bg-red-600 text-white p-4 rounded-2xl transition-all shadow-lg border border-slate-700 hover:border-red-500 group">
-                    <span class="text-2xl group-hover:scale-110 block transition-transform">✖</span>
-                </button>
-            </div>
+            <div class="flex items-center gap-6"><span class="text-6xl">🎓</span><div><h1 class="text-4xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-pink-400">ระบบรับสมัครนักเรียน</h1><p class="text-xl text-slate-400 font-medium">โรงเรียนปากแพรกวิทยาคม</p></div></div>
+            <div class="text-right flex items-center gap-8"><div class="text-right"><p id="tv-clock-date" class="text-lg text-slate-400"></p><p id="tv-clock-time" class="text-5xl font-bold font-mono animate-glow"></p></div><button onclick="closeTVMode()" class="bg-slate-800 hover:bg-red-600 text-white p-4 rounded-2xl shadow-lg border border-slate-700 text-2xl">✖</button></div>
         </div>
-
-        <!-- TV Content -->
         <div class="relative z-10 flex-1 p-8 flex flex-col justify-center gap-8 h-full">
-            
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full">
-                
-                <!-- ซ้าย: วันนี้ / ล่าสุด -->
-                <div class="bg-slate-800/40 backdrop-blur-sm border border-blue-500/30 rounded-[3rem] p-10 flex flex-col relative overflow-hidden shadow-[0_0_50px_rgba(59,130,246,0.1)]">
+                <div class="bg-slate-800/40 backdrop-blur-sm border border-blue-500/30 rounded-[3rem] p-10 flex flex-col relative shadow-[0_0_50px_rgba(59,130,246,0.1)]">
                     <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-cyan-400 to-blue-500"></div>
-                    
-                    <div class="text-center mb-8">
-                        <h2 class="text-3xl font-bold text-cyan-400 mb-2 flex justify-center items-center gap-3">
-                            <span class="animate-pulse">🔴</span> ยอดผู้สมัครล่าสุด
-                        </h2>
-                        <p id="tv-latest-date" class="text-xl text-slate-300 font-medium bg-slate-900/50 inline-block px-6 py-2 rounded-full border border-slate-700"></p>
-                    </div>
-
+                    <div class="text-center mb-8"><h2 class="text-3xl font-bold text-cyan-400 mb-2"><span class="animate-pulse">🔴</span> ยอดผู้สมัครล่าสุด</h2><p id="tv-latest-date" class="text-xl text-slate-300 bg-slate-900/50 inline-block px-6 py-2 rounded-full border border-slate-700"></p></div>
                     <div class="flex-1 flex flex-col justify-center gap-6">
-                        <div class="bg-slate-900/60 rounded-3xl p-8 border border-slate-700 text-center transform transition-transform hover:scale-105">
-                            <p class="text-2xl text-slate-400 font-bold mb-2">รวมยอดล่าสุด</p>
-                            <p id="tv-today-total" class="text-[7rem] leading-none font-black text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">0</p>
-                        </div>
-                        
+                        <div class="bg-slate-900/60 rounded-3xl p-8 border border-slate-700 text-center"><p class="text-2xl text-slate-400 font-bold mb-2">รวมยอดล่าสุด</p><p id="tv-today-total" class="text-[7rem] leading-none font-black text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">0</p></div>
                         <div class="grid grid-cols-2 gap-6">
-                            <div class="bg-blue-900/20 rounded-3xl p-6 border border-blue-800/50 text-center">
-                                <p class="text-xl text-blue-300 font-bold mb-1">ม.1</p>
-                                <p id="tv-today-m1" class="text-6xl font-black text-blue-400 drop-shadow-[0_0_15px_rgba(96,165,250,0.5)]">0</p>
-                            </div>
-                            <div class="bg-pink-900/20 rounded-3xl p-6 border border-pink-800/50 text-center">
-                                <p class="text-xl text-pink-300 font-bold mb-1">ม.4</p>
-                                <p id="tv-today-m4" class="text-6xl font-black text-pink-400 drop-shadow-[0_0_15px_rgba(244,114,182,0.5)]">0</p>
-                            </div>
+                            <div class="bg-blue-900/20 rounded-3xl p-6 border border-blue-800/50 text-center"><p class="text-xl text-blue-300 font-bold mb-1">ม.1</p><p id="tv-today-m1" class="text-6xl font-black text-blue-400">0</p></div>
+                            <div class="bg-pink-900/20 rounded-3xl p-6 border border-pink-800/50 text-center"><p class="text-xl text-pink-300 font-bold mb-1">ม.4</p><p id="tv-today-m4" class="text-6xl font-black text-pink-400">0</p></div>
                         </div>
                     </div>
                 </div>
-
-                <!-- ขวา: ยอดสะสมทั้งหมด -->
-                <div class="bg-slate-800/40 backdrop-blur-sm border border-purple-500/30 rounded-[3rem] p-10 flex flex-col relative overflow-hidden shadow-[0_0_50px_rgba(168,85,247,0.1)]">
+                <div class="bg-slate-800/40 backdrop-blur-sm border border-purple-500/30 rounded-[3rem] p-10 flex flex-col relative shadow-[0_0_50px_rgba(168,85,247,0.1)]">
                     <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-purple-500 to-pink-500"></div>
-                    
-                    <div class="text-center mb-8">
-                        <h2 class="text-3xl font-bold text-purple-400 mb-2 flex justify-center items-center gap-3">
-                            <span>📊</span> ยอดผู้สมัครสะสมทั้งหมด
-                        </h2>
-                        <p class="text-xl text-slate-300 font-medium bg-slate-900/50 inline-block px-6 py-2 rounded-full border border-slate-700 opacity-0">Spacer</p>
-                    </div>
-
+                    <div class="text-center mb-8"><h2 class="text-3xl font-bold text-purple-400 mb-2">📊 ยอดผู้สมัครสะสมทั้งหมด</h2></div>
                     <div class="flex-1 flex flex-col justify-center gap-6">
-                        <div class="bg-slate-900/60 rounded-3xl p-8 border border-slate-700 text-center transform transition-transform hover:scale-105 relative">
-                            <p class="text-2xl text-slate-400 font-bold mb-2">รวมยอดสะสมทั้งหมด</p>
-                            <p id="tv-all-total" class="text-[7rem] leading-none font-black text-transparent bg-clip-text bg-gradient-to-br from-purple-400 to-pink-400 drop-shadow-md">0</p>
-                            
-                            <!-- เพิ่มสถิติในเขต/นอกเขต ในทีวีโหมด -->
-                            <div class="flex justify-center gap-8 mt-6 pt-4 border-t border-slate-700/50">
-                                <p class="text-lg text-slate-400 font-medium">📍 ในเขต: <span id="tv-in-zone" class="text-teal-400 font-bold text-2xl ml-1">0</span></p>
-                                <p class="text-lg text-slate-400 font-medium">🌍 นอกเขต: <span id="tv-out-zone" class="text-orange-400 font-bold text-2xl ml-1">0</span></p>
-                            </div>
+                        <div class="bg-slate-900/60 rounded-3xl p-8 border border-slate-700 text-center">
+                            <p class="text-2xl text-slate-400 font-bold mb-2">รวมยอดสะสมทั้งหมด</p><p id="tv-all-total" class="text-[7rem] leading-none font-black text-transparent bg-clip-text bg-gradient-to-br from-purple-400 to-pink-400">0</p>
+                            <div class="flex justify-center gap-8 mt-6 pt-4 border-t border-slate-700/50"><p class="text-lg text-slate-400">📍 ในเขต: <span id="tv-in-zone" class="text-teal-400 font-bold text-2xl">0</span></p><p class="text-lg text-slate-400">🌍 นอกเขต: <span id="tv-out-zone" class="text-orange-400 font-bold text-2xl">0</span></p></div>
                         </div>
-                        
                         <div class="grid grid-cols-2 gap-6">
-                            <div class="bg-slate-900/40 rounded-3xl p-6 border border-slate-700/50 text-center">
-                                <p class="text-xl text-slate-400 font-bold mb-1">สะสม ม.1</p>
-                                <p id="tv-all-m1" class="text-6xl font-black text-slate-200">0</p>
-                            </div>
-                            <div class="bg-slate-900/40 rounded-3xl p-6 border border-slate-700/50 text-center">
-                                <p class="text-xl text-slate-400 font-bold mb-1">สะสม ม.4</p>
-                                <p id="tv-all-m4" class="text-6xl font-black text-slate-200">0</p>
-                            </div>
+                            <div class="bg-slate-900/40 rounded-3xl p-6 border border-slate-700/50 text-center"><p class="text-xl text-slate-400 font-bold mb-1">สะสม ม.1</p><p id="tv-all-m1" class="text-6xl font-black text-slate-200">0</p></div>
+                            <div class="bg-slate-900/40 rounded-3xl p-6 border border-slate-700/50 text-center"><p class="text-xl text-slate-400 font-bold mb-1">สะสม ม.4</p><p id="tv-all-m4" class="text-6xl font-black text-slate-200">0</p></div>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
-        
-        <!-- TV Footer -->
-        <div class="relative z-10 text-center p-4 bg-slate-900/80 border-t border-slate-800 flex justify-between items-center px-8">
-            <div class="flex items-center gap-3">
-                <div class="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
-                <span class="text-slate-400 font-medium">ระบบกำลังอัปเดตข้อมูลอัตโนมัติ</span>
-            </div>
-            <p id="tv-last-updated" class="text-slate-500 font-medium text-sm"></p>
+        <div class="relative z-10 text-center p-4 bg-slate-900/80 border-t border-slate-800 flex justify-between px-8">
+            <div class="flex items-center gap-3"><div class="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div><span class="text-slate-400 text-sm">ระบบกำลังอัปเดตข้อมูลอัตโนมัติ</span></div><p id="tv-last-updated" class="text-slate-500 text-sm"></p>
         </div>
     </div>
 
-
-    <!-- Scripts -->
     <script>
         let globalRawData = {}; 
         let tvRefreshInterval = null;
         let clockInterval = null;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            addStudentRow();
-            updateFormDisplay();
-        });
+        document.addEventListener('DOMContentLoaded', () => { addStudentRow(); updateFormDisplay(); });
 
         // ===================== Form Logic =====================
         function updateFormDisplay() {
             const grade = document.querySelector('input[name="globalGrade"]:checked').value;
-            const btn = document.getElementById('submitBtn');
-            const btnText = document.getElementById('submitBtnText');
-            
+            const btn = document.getElementById('submitBtn'), btnText = document.getElementById('submitBtnText');
             btnText.innerText = `บันทึกข้อมูล ${grade} ลงระบบ`;
-            
-            // สลับสีปุ่มบันทึก: ม.1 สีชมพู, ม.4 สีน้ำเงิน
-            if (grade === 'ม.4') {
-                btn.className = "bg-gradient-to-r from-blue-700 to-blue-600 hover:from-blue-800 hover:to-blue-700 text-white font-bold py-4 px-12 rounded-2xl shadow-[0_8px_20px_rgba(29,78,216,0.25)] transition-all duration-300 hover:-translate-y-1 w-full md:w-auto text-lg flex items-center justify-center mx-auto gap-3";
-            } else {
-                btn.className = "bg-gradient-to-r from-pink-600 to-pink-500 hover:from-pink-700 hover:to-pink-600 text-white font-bold py-4 px-12 rounded-2xl shadow-[0_8px_20px_rgba(219,39,119,0.25)] transition-all duration-300 hover:-translate-y-1 w-full md:w-auto text-lg flex items-center justify-center mx-auto gap-3";
-            }
-
+            if (grade === 'ม.4') { btn.className = "bg-gradient-to-r from-blue-700 to-blue-600 hover:from-blue-800 text-white font-bold py-4 px-12 rounded-2xl shadow-lg transition-all w-full md:w-auto text-lg flex items-center justify-center mx-auto gap-3"; } 
+            else { btn.className = "bg-gradient-to-r from-pink-600 to-pink-500 hover:from-pink-700 text-white font-bold py-4 px-12 rounded-2xl shadow-lg transition-all w-full md:w-auto text-lg flex items-center justify-center mx-auto gap-3"; }
             document.querySelectorAll('.m4-only-section').forEach(sec => {
-                if (grade === 'ม.4') {
-                    sec.classList.remove('hidden');
-                    const select = sec.querySelector('select');
-                    if(select) select.setAttribute('required', 'true');
-                } else {
-                    sec.classList.add('hidden');
-                    const select = sec.querySelector('select');
-                    if(select) { select.removeAttribute('required'); select.value = ""; }
-                    const checkbox = sec.querySelector('input[type="checkbox"]');
-                    if(checkbox) checkbox.checked = false;
-                }
+                if (grade === 'ม.4') { sec.classList.remove('hidden'); sec.querySelector('select')?.setAttribute('required', 'true'); } 
+                else { sec.classList.add('hidden'); if(sec.querySelector('select')) sec.querySelector('select').removeAttribute('required'); }
             });
+        }
+
+        function toggleOtherSchool(rowId, selectElem) {
+            const input = document.getElementById(`other-school-${rowId}`);
+            if (selectElem.value === 'other') { input.classList.remove('hidden'); input.setAttribute('required', 'true'); input.focus(); } 
+            else { input.classList.add('hidden'); input.removeAttribute('required'); input.value = ''; }
         }
 
         function toggleOtherAbility(rowId, cb) {
             const input = document.getElementById(`other-ability-${rowId}`);
-            if (cb.checked) {
-                input.classList.remove('hidden');
-                input.focus();
-            } else {
-                input.classList.add('hidden');
-                input.value = '';
-            }
-        }
-
-        // ฟังก์ชันเปิด-ปิด ช่องพิมพ์ชื่อโรงเรียนเมื่อเลือก "อื่นๆ"
-        function toggleOtherSchool(rowId, selectElem) {
-            const inputElem = document.getElementById(`other-school-${rowId}`);
-            if (selectElem.value === 'other') {
-                inputElem.classList.remove('hidden');
-                inputElem.setAttribute('required', 'true');
-                inputElem.focus();
-            } else {
-                inputElem.classList.add('hidden');
-                inputElem.removeAttribute('required');
-                inputElem.value = '';
-            }
+            if (cb.checked) { input.classList.remove('hidden'); input.focus(); } else { input.classList.add('hidden'); input.value = ''; }
         }
 
         function addStudentRow() {
             const container = document.getElementById('students-container');
             const rowId = `student-row-${Date.now()}`;
-            
-            // สร้าง Options สำหรับโรงเรียนในเขต
             const schoolOptions = IN_ZONE_SCHOOLS.map(school => `<option value="${school}">${school}</option>`).join('');
 
             const div = document.createElement('div');
@@ -456,516 +269,258 @@
             div.id = rowId;
             
             div.innerHTML = `
-                <div class="flex justify-between items-center border-b border-slate-100 pb-4 mb-5">
-                    <div class="flex items-center gap-3">
-                        <span class="row-number-badge bg-blue-900 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shadow-md"></span>
-                        <h4 class="font-bold text-blue-900 text-lg">ข้อมูลผู้สมัคร</h4>
-                    </div>
-                    <button type="button" onclick="removeStudentRow('${rowId}')" class="delete-btn text-pink-500 hover:text-pink-700 hover:bg-pink-50 px-3 py-1 rounded-lg transition text-sm font-bold flex items-center gap-1">
-                        <span>🗑️</span> ลบ
-                    </button>
+                <div class="flex justify-between border-b border-slate-100 pb-4 mb-5">
+                    <div class="flex items-center gap-3"><span class="row-number-badge bg-blue-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold"></span><h4 class="font-bold text-blue-900 text-lg">ข้อมูลผู้สมัคร</h4></div>
+                    <button type="button" onclick="removeStudentRow('${rowId}')" class="delete-btn text-pink-500 hover:text-pink-700 font-bold text-sm">🗑️ ลบ</button>
                 </div>
-                
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="md:col-span-1">
-                        <label class="block text-sm font-bold text-slate-700 mb-2">เลขที่สมัคร *</label>
-                        <input type="text" name="appNo" required class="modern-input bg-slate-50 focus:bg-white" placeholder="เช่น 001">
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-bold text-slate-700 mb-2">ชื่อ-นามสกุล *</label>
-                        <input type="text" name="fullName" required class="modern-input bg-slate-50 focus:bg-white" placeholder="ด.ช. / ด.ญ. / นาย / นางสาว">
-                    </div>
-
-                    <!-- ส่วนที่แก้ใหม่: โรงเรียนเดิม -->
+                    <div class="md:col-span-1"><label class="block text-sm font-bold text-slate-700 mb-2">เลขที่สมัคร *</label><input type="text" name="appNo" required class="modern-input bg-slate-50 focus:bg-white" placeholder="เช่น 001"></div>
+                    <div class="md:col-span-2"><label class="block text-sm font-bold text-slate-700 mb-2">ชื่อ-นามสกุล *</label><input type="text" name="fullName" required class="modern-input bg-slate-50 focus:bg-white" placeholder="ด.ช./ด.ญ./นาย/นางสาว"></div>
                     <div class="md:col-span-3">
                         <label class="block text-sm font-bold text-slate-700 mb-2">จบจากโรงเรียนเดิม *</label>
-                        <div class="flex flex-col gap-3">
-                            <select name="prevSchoolSelect" required onchange="toggleOtherSchool('${rowId}', this)" class="modern-input bg-slate-50 focus:bg-white cursor-pointer border-slate-300">
-                                <option value="">-- กรุณาเลือกโรงเรียนเดิม --</option>
-                                <optgroup label="📍 โรงเรียนในเขตพื้นที่บริการ">
-                                    ${schoolOptions}
-                                </optgroup>
-                                <optgroup label="🌍 โรงเรียนนอกเขตพื้นที่บริการ">
-                                    <option value="other">✨ อื่นๆ (พิมพ์ระบุชื่อโรงเรียนเอง)</option>
-                                </optgroup>
-                            </select>
-                            <input type="text" id="other-school-${rowId}" name="prevSchoolOther" class="hidden modern-input bg-orange-50/50 border-orange-200 focus:border-orange-500" placeholder="พิมพ์ชื่อโรงเรียนเดิม (นอกเขต)...">
-                        </div>
+                        <select name="prevSchoolSelect" required onchange="toggleOtherSchool('${rowId}', this)" class="modern-input bg-slate-50 cursor-pointer mb-2">
+                            <option value="">-- กรุณาเลือกโรงเรียนเดิม --</option><optgroup label="📍 ในเขตพื้นที่บริการ">${schoolOptions}</optgroup><optgroup label="🌍 นอกเขตพื้นที่บริการ"><option value="other">✨ อื่นๆ (พิมพ์ระบุชื่อโรงเรียนเอง)</option></optgroup>
+                        </select>
+                        <input type="text" id="other-school-${rowId}" class="hidden modern-input bg-orange-50/50 border-orange-200" placeholder="พิมพ์ชื่อโรงเรียนเดิม (นอกเขต)...">
                     </div>
-
                     <div class="md:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6 mt-2 border-t border-slate-100 pt-5">
-                        
                         <div class="bg-blue-50/50 p-4 rounded-2xl border border-blue-100">
-                            <label class="block text-sm font-bold text-blue-900 mb-3 flex items-center gap-2">
-                                <span>⭐</span> ความสามารถพิเศษ (เลือกได้มากกว่า 1)
-                            </label>
-                            
+                            <label class="block text-sm font-bold text-blue-900 mb-3">⭐ ความสามารถพิเศษ (เลือกได้มากกว่า 1)</label>
                             <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                                <label class="flex items-center gap-2 cursor-pointer hover:bg-blue-50 p-1.5 rounded-lg transition-colors">
-                                    <input type="checkbox" class="ability-cb-${rowId} w-4 h-4 text-blue-600 rounded border-blue-300 focus:ring-blue-500" value="ดนตรี">
-                                    <span class="text-sm font-medium text-slate-700">🎵 ดนตรี</span>
-                                </label>
-                                <label class="flex items-center gap-2 cursor-pointer hover:bg-blue-50 p-1.5 rounded-lg transition-colors">
-                                    <input type="checkbox" class="ability-cb-${rowId} w-4 h-4 text-blue-600 rounded border-blue-300 focus:ring-blue-500" value="กีฬา">
-                                    <span class="text-sm font-medium text-slate-700">⚽ กีฬา</span>
-                                </label>
-                                <label class="flex items-center gap-2 cursor-pointer hover:bg-blue-50 p-1.5 rounded-lg transition-colors">
-                                    <input type="checkbox" class="ability-cb-${rowId} w-4 h-4 text-blue-600 rounded border-blue-300 focus:ring-blue-500" value="ภาษา">
-                                    <span class="text-sm font-medium text-slate-700">🗣️ ภาษา</span>
-                                </label>
-                                <label class="flex items-center gap-2 cursor-pointer hover:bg-blue-50 p-1.5 rounded-lg transition-colors">
-                                    <input type="checkbox" class="ability-cb-${rowId} w-4 h-4 text-blue-600 rounded border-blue-300 focus:ring-blue-500" value="ศิลปะ">
-                                    <span class="text-sm font-medium text-slate-700">🎨 ศิลปะ</span>
-                                </label>
+                                <label class="flex gap-2"><input type="checkbox" class="ability-cb-${rowId} w-4 h-4 text-blue-600 rounded" value="ดนตรี"> <span class="text-sm">🎵 ดนตรี</span></label>
+                                <label class="flex gap-2"><input type="checkbox" class="ability-cb-${rowId} w-4 h-4 text-blue-600 rounded" value="กีฬา"> <span class="text-sm">⚽ กีฬา</span></label>
+                                <label class="flex gap-2"><input type="checkbox" class="ability-cb-${rowId} w-4 h-4 text-blue-600 rounded" value="ภาษา"> <span class="text-sm">🗣️ ภาษา</span></label>
+                                <label class="flex gap-2"><input type="checkbox" class="ability-cb-${rowId} w-4 h-4 text-blue-600 rounded" value="ศิลปะ"> <span class="text-sm">🎨 ศิลปะ</span></label>
                             </div>
-                            
-                            <div class="mt-2 pt-2 border-t border-blue-100/50 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
-                                <label class="flex items-center gap-2 cursor-pointer hover:bg-blue-50 p-1.5 rounded-lg transition-colors shrink-0">
-                                    <input type="checkbox" class="ability-cb-${rowId} w-4 h-4 text-blue-600 rounded border-blue-300 focus:ring-blue-500" value="อื่นๆ" onchange="toggleOtherAbility('${rowId}', this)">
-                                    <span class="text-sm font-medium text-slate-700">✨ อื่นๆ (ระบุ)</span>
-                                </label>
-                                <input type="text" id="other-ability-${rowId}" class="hidden modern-input py-1.5 px-3 text-sm w-full border-blue-200 focus:border-blue-400 bg-white" placeholder="โปรดระบุความสามารถพิเศษ...">
+                            <div class="mt-3 pt-3 border-t border-blue-100/50 flex flex-col gap-2">
+                                <label class="flex gap-2"><input type="checkbox" class="ability-cb-${rowId} w-4 h-4 text-blue-600 rounded" value="อื่นๆ" onchange="toggleOtherAbility('${rowId}', this)"> <span class="text-sm">✨ อื่นๆ (ระบุ)</span></label>
+                                <input type="text" id="other-ability-${rowId}" class="hidden modern-input py-1.5 px-3 text-sm" placeholder="ระบุความสามารถ...">
                             </div>
                         </div>
-
                         <div class="m4-only-section hidden space-y-4">
                             <div class="bg-pink-50/50 p-4 rounded-2xl border border-pink-100">
                                 <label class="block text-sm font-bold text-pink-900 mb-2">📚 สายการเรียน (ม.4) *</label>
-                                <select name="m4Track" class="modern-input bg-white border-pink-200 focus:border-pink-500 text-sm shadow-sm">
-                                    <option value="">-- เลือกสายการเรียน --</option>
-                                    <option value="วิทย์-คณิต">วิทย์-คณิต</option>
-                                    <option value="ศิลป์-คำนวณ">ศิลป์-คำนวณ</option>
-                                    <option value="ศิลป์-ภาษา">ศิลป์-ภาษา</option>
-                                    <option value="เตรียมวิศวกรรมศาสตร์">เตรียมวิศวกรรมศาสตร์</option>
-                                    <option value="นวัตกรรมการจัดการเกษตร">นวัตกรรมการจัดการเกษตร</option>
-                                    <option value="ภาษาอังกฤษเพื่อการสื่อสารธุรกิจ">ภาษาอังกฤษเพื่อการสื่อสารธุรกิจ</option>
+                                <select name="m4Track" class="modern-input bg-white text-sm">
+                                    <option value="">-- เลือกสายการเรียน --</option><option value="วิทย์-คณิต">วิทย์-คณิต</option><option value="ศิลป์-คำนวณ">ศิลป์-คำนวณ</option>
+                                    <option value="ศิลป์-ภาษา">ศิลป์-ภาษา</option><option value="เตรียมวิศวกรรมศาสตร์">เตรียมวิศวกรรมศาสตร์</option>
+                                    <option value="นวัตกรรมการจัดการเกษตร">นวัตกรรมการจัดการเกษตร</option><option value="ภาษาอังกฤษเพื่อการสื่อสารธุรกิจ">ภาษาอังกฤษเพื่อการสื่อสารธุรกิจ</option>
                                     <option value="การจัดการธุรกิจอาหาร">การจัดการธุรกิจอาหาร</option>
                                 </select>
-                                
                                 <div class="mt-4 pt-4 border-t border-pink-200/50">
-                                    <label class="flex items-center gap-2 cursor-pointer hover:bg-pink-100/50 p-2 rounded-xl transition">
-                                        <input type="checkbox" name="isOldStudent" class="w-5 h-5 text-pink-600 rounded border-pink-300 focus:ring-pink-500">
-                                        <span class="text-sm font-bold text-pink-700">🏫 เป็นนักเรียนเดิม (ปากแพรกวิทยาคม)</span>
-                                    </label>
+                                    <label class="flex gap-2"><input type="checkbox" name="isOldStudent" class="w-5 h-5 text-pink-600 rounded border-pink-300"><span class="text-sm font-bold text-pink-700">🏫 เป็นนักเรียนเดิม (ปากแพรกฯ)</span></label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            `;
-            container.appendChild(div);
-            updateRowNumbers();
-            updateFormDisplay();
+                </div>`;
+            container.appendChild(div); updateRowNumbers(); updateFormDisplay();
         }
 
-        function removeStudentRow(rowId) {
-            if (document.querySelectorAll('.student-row').length <= 1) return alert("ต้องมีอย่างน้อย 1 คนครับ");
-            document.getElementById(rowId).remove();
-            updateRowNumbers();
-        }
+        function removeStudentRow(id) { if(document.querySelectorAll('.student-row').length<=1) return; document.getElementById(id).remove(); updateRowNumbers(); }
+        function updateRowNumbers() { const badges = document.querySelectorAll('.row-number-badge'); badges.forEach((b, i) => b.textContent = i + 1); document.getElementById('next-student-num').textContent = badges.length + 1; const btns = document.querySelectorAll('.delete-btn'); btns.forEach(btn => btn.style.display = btns.length > 1 ? 'flex' : 'none'); }
 
-        function updateRowNumbers() {
-            const badges = document.querySelectorAll('.row-number-badge');
-            badges.forEach((b, i) => b.textContent = i + 1);
-            document.getElementById('next-student-num').textContent = badges.length + 1;
-            const btns = document.querySelectorAll('.delete-btn');
-            btns.forEach(btn => btn.style.display = btns.length > 1 ? 'flex' : 'none');
-        }
-
-        // ===================== Navigation Logic =====================
         function switchTab(tab) {
-            ['form', 'dashboard'].forEach(t => {
-                document.getElementById('section-' + t).classList.add('hidden');
-                document.getElementById('tab-' + t).className = "pb-4 px-4 tab-inactive text-lg";
-            });
-            document.getElementById('section-' + tab).classList.remove('hidden');
-            document.getElementById('tab-' + tab).className = "pb-4 px-4 tab-active text-lg";
-            
-            // Show TV button only on dashboard
+            ['form', 'dashboard'].forEach(t => { document.getElementById('section-' + t).classList.add('hidden'); document.getElementById('tab-' + t).className = "pb-4 px-4 tab-inactive text-lg"; });
+            document.getElementById('section-' + tab).classList.remove('hidden'); document.getElementById('tab-' + tab).className = "pb-4 px-4 tab-active text-lg";
             const btnTv = document.getElementById('btn-enter-tv');
-            if(tab === 'dashboard') {
-                btnTv.classList.remove('hidden');
-                loadDashboardData();
-            } else {
-                btnTv.classList.add('hidden');
-            }
+            if(tab === 'dashboard') { btnTv.classList.remove('hidden'); loadDashboardData(); } else { btnTv.classList.add('hidden'); }
         }
 
-        // ===================== Form Submit =====================
         async function submitForm(e) {
             e.preventDefault();
-            const staffName = document.getElementById('staffName').value;
-            const selectedGrade = document.querySelector('input[name="globalGrade"]:checked').value; 
-            const students = [];
-
+            const staffName = document.getElementById('staffName').value, grade = document.querySelector('input[name="globalGrade"]:checked').value, students = [];
             document.querySelectorAll('.student-row').forEach(row => {
                 let abilities = [];
-                row.querySelectorAll(`.ability-cb-${row.id}:checked`).forEach(cb => {
-                    if (cb.value === 'อื่นๆ') {
-                        const otherVal = document.getElementById(`other-ability-${row.id}`).value.trim();
-                        if (otherVal) abilities.push(otherVal);
-                    } else {
-                        abilities.push(cb.value);
-                    }
-                });
-                const finalAbilityStr = abilities.join(', ');
-
-                // จัดการค่าโรงเรียนเดิม
-                let prevSchoolValue = "";
+                row.querySelectorAll(`.ability-cb-${row.id}:checked`).forEach(cb => { if(cb.value === 'อื่นๆ') { const otherVal = document.getElementById(`other-ability-${row.id}`).value.trim(); if(otherVal) abilities.push(otherVal); } else abilities.push(cb.value); });
                 const schoolSelect = row.querySelector('select[name="prevSchoolSelect"]').value;
-                if (schoolSelect === 'other') {
-                    prevSchoolValue = row.querySelector(`input[id="other-school-${row.id}"]`).value.trim();
-                } else {
-                    prevSchoolValue = schoolSelect;
-                }
-
-                const track = (selectedGrade === 'ม.4' && row.querySelector('select[name="m4Track"]')) ? row.querySelector('select[name="m4Track"]').value : "";
+                const prevSchoolValue = schoolSelect === 'other' ? document.getElementById(`other-school-${row.id}`).value.trim() : schoolSelect;
                 const oldStudentCheck = row.querySelector('input[name="isOldStudent"]');
-                const isOldStudent = (selectedGrade === 'ม.4' && oldStudentCheck && oldStudentCheck.checked) ? "นักเรียนเดิม" : (selectedGrade === 'ม.4' ? "นักเรียนใหม่" : "");
 
                 students.push({
-                    action: "submit", grade: selectedGrade, staffName: staffName,
-                    appNo: row.querySelector('input[name="appNo"]').value,
-                    fullName: row.querySelector('input[name="fullName"]').value,
-                    prevSchool: prevSchoolValue,
-                    ability: finalAbilityStr,
-                    track: track,
-                    isOldStudent: isOldStudent
+                    action: "submit", grade: grade, staffName: staffName, appNo: row.querySelector('input[name="appNo"]').value, fullName: row.querySelector('input[name="fullName"]').value,
+                    prevSchool: prevSchoolValue, ability: abilities.join(', '), track: grade === 'ม.4' ? row.querySelector('select[name="m4Track"]').value : "",
+                    isOldStudent: (grade === 'ม.4' && oldStudentCheck?.checked) ? "นักเรียนเดิม" : (grade === 'ม.4' ? "นักเรียนใหม่" : "")
                 });
             });
 
             const btn = document.getElementById('submitBtn'), msg = document.getElementById('submitMsg'), prog = document.getElementById('progressBar');
             btn.disabled = true; msg.classList.remove('hidden'); document.getElementById('progressContainer').classList.remove('hidden');
-            
             let success = 0, fail = 0;
-            for (let i = 0; i < students.length; i++) {
-                prog.style.width = `${(i / students.length) * 100}%`;
-                msg.innerHTML = `<span class="loader" style="width:14px;height:14px;border-top-color:#1e3a8a;"></span> กำลังบันทึก ${students[i].fullName}`;
-                try {
-                    const res = await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify(students[i]) });
-                    if((await res.json()).status === 'success') success++; else fail++;
-                } catch (e) { fail++; }
+            for (let i=0; i<students.length; i++) {
+                prog.style.width = `${(i/students.length)*100}%`; msg.innerHTML = `<span class="loader"></span> กำลังบันทึก ${students[i].fullName}`;
+                try { const res = await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify(students[i]) }); if((await res.json()).status === 'success') success++; else fail++; } catch(e) { fail++; }
             }
-
             prog.style.width = '100%'; btn.disabled = false;
-            msg.innerHTML = fail === 0 ? `🎉 บันทึกสำเร็จ ${success} คน!` : `⚠️ สำเร็จ ${success}, <span class="text-red-500">ล้มเหลว ${fail}</span>`;
-            msg.className = `mt-5 text-base font-bold block p-4 rounded-xl border ${fail===0 ? 'bg-green-50 text-green-700 border-green-200' : 'bg-orange-50 text-orange-700 border-orange-200'}`;
-            
-            if (fail === 0) {
-                document.getElementById('regForm').reset();
-                document.getElementById('staffName').value = staffName; 
-                document.querySelector(`input[value="${selectedGrade}"]`).checked = true;
-                document.getElementById('students-container').innerHTML = ''; addStudentRow();
-            }
+            msg.innerHTML = fail === 0 ? `🎉 สำเร็จ ${success} คน!` : `⚠️ สำเร็จ ${success}, ล้มเหลว ${fail}`;
+            msg.className = `mt-5 font-bold block p-4 rounded-xl border ${fail===0 ? 'bg-green-50 text-green-700 border-green-200' : 'bg-orange-50 text-orange-700 border-orange-200'}`;
+            if(fail === 0) { document.getElementById('regForm').reset(); document.getElementById('staffName').value=staffName; document.getElementById('students-container').innerHTML=''; addStudentRow(); }
             setTimeout(() => { document.getElementById('progressContainer').classList.add('hidden'); msg.classList.add('hidden'); }, 5000);
         }
 
-        // ===================== Dashboard & Data Loading =====================
+        // ===================== Dashboard Logic =====================
         async function loadDashboardData() {
             const isTVMode = !document.getElementById('tv-mode-container').classList.contains('hidden');
-            if(!isTVMode) {
-                document.getElementById('loadingDash').classList.remove('hidden');
-                document.getElementById('dashboardContent').classList.add('hidden');
-            }
-
+            if(!isTVMode) { document.getElementById('loadingDash').classList.remove('hidden'); document.getElementById('dashboardContent').classList.add('hidden'); }
             try {
-                const res = await fetch(GOOGLE_SCRIPT_URL);
-                const data = await res.json();
-                
-                // Normal Dashboard Update
+                const res = await fetch(GOOGLE_SCRIPT_URL); const data = await res.json();
                 globalRawData = data.applicantsByDate;
                 populateExportSelect(globalRawData);
 
-                document.getElementById('stat-m1').innerText = data.totalM1 || 0;
-                document.getElementById('stat-m4').innerText = data.totalM4 || 0;
-                document.getElementById('stat-total').innerText = (data.totalM1 || 0) + (data.totalM4 || 0);
+                document.getElementById('stat-total').innerText = (data.totalM1||0) + (data.totalM4||0); document.getElementById('stat-m1').innerText = data.totalM1||0; document.getElementById('stat-m4').innerText = data.totalM4||0;
                 
-                // คำนวณสถิติ ในเขต / นอกเขต
-                let inZoneCount = 0;
-                let outZoneCount = 0;
-                if (data.applicantsByDate) {
-                    Object.values(data.applicantsByDate).forEach(dateObj => {
-                        ['ม.1', 'ม.4'].forEach(grade => {
-                            if (dateObj[grade]) {
-                                dateObj[grade].forEach(student => {
-                                    // ถ้าตรงกับลิสต์ให้เป็นในเขต ถ้าไม่ตรงเป็นนอกเขต
-                                    if (IN_ZONE_SCHOOLS.includes(student.prevSchool)) {
-                                        inZoneCount++;
-                                    } else {
-                                        outZoneCount++;
-                                    }
-                                });
-                            }
-                        });
-                    });
-                }
-
-                // อัปเดตตัวเลขโซน
-                document.getElementById('stat-in-zone').innerText = inZoneCount;
-                document.getElementById('stat-out-zone').innerText = outZoneCount;
+                let inZoneCount = 0, outZoneCount = 0;
+                if(data.applicantsByDate) { Object.values(data.applicantsByDate).forEach(d => { ['ม.1','ม.4'].forEach(g => { if(d[g]) d[g].forEach(s => { IN_ZONE_SCHOOLS.includes(s.prevSchool) ? inZoneCount++ : outZoneCount++; }); }); }); }
+                document.getElementById('stat-in-zone').innerText = inZoneCount; document.getElementById('stat-out-zone').innerText = outZoneCount;
                 
-                if(data.dailyStats) renderDailyChart(data.dailyStats);
-                if(data.schoolStats) renderSchoolChart(data.schoolStats);
+                if(data.dailyStats) renderDailyChart(data.dailyStats); if(data.schoolStats) renderSchoolChart(data.schoolStats);
                 renderTimeline(data.applicantsByDate);
                 
-                if(!isTVMode) {
-                    document.getElementById('loadingDash').classList.add('hidden');
-                    document.getElementById('dashboardContent').classList.remove('hidden');
-                }
-
-                // Update TV Mode Data if active (ส่งค่า inZone/outZone ไปด้วย)
+                if(!isTVMode) { document.getElementById('loadingDash').classList.add('hidden'); document.getElementById('dashboardContent').classList.remove('hidden'); }
                 updateTVDataUI(data, inZoneCount, outZoneCount);
-
-            } catch (e) { 
-                if(!isTVMode) document.getElementById('loadingDash').innerHTML = `<p class="text-red-500 font-bold p-4">❌ ไม่สามารถดึงข้อมูลได้: ${e.message}</p>`; 
-                console.error("Dashboard Load Error:", e);
-            }
+            } catch (e) { if(!isTVMode) document.getElementById('loadingDash').innerHTML = `<p class="text-red-500 font-bold p-4">❌ Error: ${e.message}</p>`; }
         }
 
-        // ===================== TV Mode Logic =====================
-        function startTVClock() {
-            if (clockInterval) clearInterval(clockInterval);
-            const updateClock = () => {
-                const now = new Date();
-                const timeOpts = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-                const dateOpts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-                document.getElementById('tv-clock-time').textContent = now.toLocaleTimeString('th-TH', timeOpts);
-                let dateStr = now.toLocaleDateString('th-TH', dateOpts);
-                document.getElementById('tv-clock-date').textContent = dateStr;
-            };
-            updateClock();
-            clockInterval = setInterval(updateClock, 1000);
-        }
-
-        function openTVMode() {
-            const tvContainer = document.getElementById('tv-mode-container');
-            const mainApp = document.getElementById('main-app-container');
-            
-            tvContainer.classList.remove('hidden');
-            mainApp.classList.add('hidden'); 
-            
-            const elem = document.documentElement;
-            if (elem.requestFullscreen) { elem.requestFullscreen().catch(err => console.log(err)); } 
-            else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); }
-
-            startTVClock();
-            loadDashboardData(); 
-            
-            if(tvRefreshInterval) clearInterval(tvRefreshInterval);
-            tvRefreshInterval = setInterval(loadDashboardData, 30000); 
-        }
-
-        function closeTVMode() {
-            const tvContainer = document.getElementById('tv-mode-container');
-            const mainApp = document.getElementById('main-app-container');
-            
-            tvContainer.classList.add('hidden');
-            mainApp.classList.remove('hidden');
-
-            if (document.exitFullscreen) { document.exitFullscreen().catch(err => console.log(err)); } 
-            else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); }
-
-            if(tvRefreshInterval) clearInterval(tvRefreshInterval);
-            if(clockInterval) clearInterval(clockInterval);
-        }
-
-        document.addEventListener('fullscreenchange', (e) => {
-            if (!document.fullscreenElement) {
-                if(!document.getElementById('tv-mode-container').classList.contains('hidden')){
-                    closeTVMode();
-                }
-            }
-        });
-
-        function updateTVDataUI(data, inZoneCount, outZoneCount) {
-            document.getElementById('tv-all-total').textContent = (data.totalM1 || 0) + (data.totalM4 || 0);
-            document.getElementById('tv-all-m1').textContent = data.totalM1 || 0;
-            document.getElementById('tv-all-m4').textContent = data.totalM4 || 0;
-            
-            // อัปเดตสถิติโซนในจอทีวี
-            document.getElementById('tv-in-zone').textContent = inZoneCount || 0;
-            document.getElementById('tv-out-zone').textContent = outZoneCount || 0;
-
-            let latestDateText = "ยังไม่มีข้อมูล";
-            let tM1 = 0, tM4 = 0;
-
-            if (data.dailyStats && Object.keys(data.dailyStats).length > 0) {
-                const dates = Object.keys(data.dailyStats);
-                dates.sort((a,b) => {
-                    let da = a.split('/').reverse().join('');
-                    let db = b.split('/').reverse().join('');
-                    return da.localeCompare(db);
-                });
-                
-                const latestDateKey = dates[dates.length - 1];
-                latestDateText = `วันที่ ${latestDateKey}`;
-                tM1 = data.dailyStats[latestDateKey]['ม.1'] || 0;
-                tM4 = data.dailyStats[latestDateKey]['ม.4'] || 0;
-            }
-
-            document.getElementById('tv-latest-date').innerHTML = `📍 ข้อมูลประจำ <b>${latestDateText}</b>`;
-            document.getElementById('tv-today-m1').textContent = tM1;
-            document.getElementById('tv-today-m4').textContent = tM4;
-            document.getElementById('tv-today-total').textContent = tM1 + tM4;
-
-            const now = new Date();
-            document.getElementById('tv-last-updated').textContent = `อัปเดตข้อมูลล่าสุด: ${now.toLocaleTimeString('th-TH')}`;
-        }
-
-        // ===================== Export & Charts =====================
         function populateExportSelect(dataByDate) {
-            const select = document.getElementById('exportDateSelect');
-            select.innerHTML = '<option value="all">📅 ทุกวันที่รับสมัคร (ทั้งหมด)</option>';
-            const dates = Object.keys(dataByDate || {}).sort((a,b)=> {
-                 let da = a.split('/').reverse().join('');
-                 let db = b.split('/').reverse().join('');
-                 return db.localeCompare(da); 
-            });
-            dates.forEach(d => { select.innerHTML += `<option value="${d}">📍 เฉพาะวันที่ ${d}</option>`; });
+            const dates = Object.keys(dataByDate||{}).sort((a,b)=>b.localeCompare(a));
+            document.getElementById('exportDateSelect').innerHTML = '<option value="all">📅 ทุกวัน</option>' + dates.map(d=>`<option value="${d}">📍 ${d}</option>`).join('');
         }
 
-        function exportToCSV() {
-            if(!globalRawData || Object.keys(globalRawData).length === 0) return alert("ไม่มีข้อมูลให้ดาวน์โหลด");
-            const selectedDate = document.getElementById('exportDateSelect').value;
-            const selectedGrade = document.getElementById('exportGradeSelect').value;
+        // ===================== ฟังก์ชันดึงข้อมูลลงตาราง 5 วัน =====================
+        async function exportToGraphic() {
+            if(!globalRawData || Object.keys(globalRawData).length === 0) return alert("ยังไม่มีข้อมูลสำหรับสร้างตาราง");
             
-            let csvRows = [];
-            csvRows.push(["วันที่", "เวลา", "ระดับชั้น", "เลขที่สมัคร", "ชื่อ-นามสกุล", "โรงเรียนเดิม", "เขตพื้นที่บริการ", "ความสามารถพิเศษ", "สายการเรียน", "สถานะนักเรียน", "ผู้รับสมัคร"]);
+            const btn = document.getElementById('btnGenerateGraphic');
+            const btnText = document.getElementById('graphicBtnText');
+            
+            btn.disabled = true; 
+            btnText.innerHTML = '<span class="loader" style="width:14px;height:14px;border-top-color:#fff;"></span> กำลังประมวลผลตาราง...';
 
-            const datesToExport = selectedDate === 'all' ? Object.keys(globalRawData).sort() : [selectedDate];
-            const gradesToExport = selectedGrade === 'all' ? ['ม.1', 'ม.4'] : [selectedGrade];
-            let hasData = false;
+            try {
+                // ดึงวันที่ทั้งหมดและเรียงจากน้อยไปมาก
+                const availableDates = Object.keys(globalRawData).sort();
+                
+                // เตรียมโครงสร้างข้อมูลสำหรับส่งไป Backend
+                let summaryData = { SUM_M1: 0, SUM_M4: 0, SUM_ALL: 0 };
 
-            datesToExport.forEach(date => {
-                gradesToExport.forEach(grade => {
-                    const students = globalRawData[date][grade] || [];
-                    if(students.length > 0) hasData = true;
-                    students.reverse().forEach(s => {
-                        const zoneType = IN_ZONE_SCHOOLS.includes(s.prevSchool) ? "ในเขตพื้นที่ฯ" : "นอกเขตพื้นที่ฯ";
-                        csvRows.push([
-                            s.dateStr, s.time, s.grade, s.appNo, s.fullName, s.prevSchool, zoneType,
-                            s.ability || "-", s.track || "-", s.isOldStudent || "-", s.staffName
-                        ]);
-                    });
-                });
-            });
+                // เตรียมตัวแปรว่างไว้ล่วงหน้า 5 วัน เพื่อไม่ให้เกิด Error ในสไลด์ถ้าวันไม่ครบ
+                for(let i=1; i<=5; i++) {
+                    summaryData[`D${i}_M1_OUT`] = ""; summaryData[`D${i}_M1_IN`] = ""; summaryData[`D${i}_M1_TOT`] = "";
+                    summaryData[`D${i}_M4_OLD`] = ""; summaryData[`D${i}_M4_NEW`] = ""; summaryData[`D${i}_M4_TOT`] = "";
+                }
 
-            if(!hasData) return alert("ไม่พบข้อมูลตามเงื่อนไขที่เลือกครับ");
-            let csvContent = "\uFEFF"; 
-            csvRows.forEach(row => {
-                let formattedRow = row.map(str => `"${String(str).replace(/"/g, '""')}"`).join(",");
-                csvContent += formattedRow + "\r\n";
-            });
+                // วนลูปใส่วันที่ที่มีข้อมูล (ทำสูงสุดแค่ 5 วันตามตาราง)
+                for(let i = 0; i < Math.min(availableDates.length, 5); i++) {
+                    let d = availableDates[i];
+                    let dNum = i + 1; // เลขวัน D1, D2, D3, D4, D5
+                    
+                    let m1List = globalRawData[d]["ม.1"] || [];
+                    let m4List = globalRawData[d]["ม.4"] || [];
 
-            const gradeText = selectedGrade === 'all' ? 'รวมทุกระดับชั้น' : selectedGrade;
-            const dateText = selectedDate === 'all' ? 'ทั้งหมด' : selectedDate.replace(/\//g,'-');
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = `ข้อมูลรับสมัคร_${gradeText}_${dateText}.csv`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+                    let m1In = 0, m1Out = 0, m4Old = 0, m4New = 0;
+                    m1List.forEach(s => { IN_ZONE_SCHOOLS.includes(s.prevSchool) ? m1In++ : m1Out++; });
+                    m4List.forEach(s => { s.isOldStudent === 'นักเรียนเดิม' ? m4Old++ : m4New++; });
+
+                    // ยอดรายวัน (ถ้าเป็น 0 จะใส่ "-" แทน)
+                    summaryData[`D${dNum}_M1_OUT`] = m1Out > 0 ? m1Out : "-";
+                    summaryData[`D${dNum}_M1_IN`]  = m1In > 0 ? m1In : "-";
+                    summaryData[`D${dNum}_M1_TOT`] = m1List.length > 0 ? m1List.length : "-";
+
+                    summaryData[`D${dNum}_M4_OLD`] = m4Old > 0 ? m4Old : "-";
+                    summaryData[`D${dNum}_M4_NEW`] = m4New > 0 ? m4New : "-";
+                    summaryData[`D${dNum}_M4_TOT`] = m4List.length > 0 ? m4List.length : "-";
+
+                    // เก็บยอดสะสมรวม
+                    summaryData.SUM_M1 += m1List.length;
+                    summaryData.SUM_M4 += m4List.length;
+                }
+                summaryData.SUM_ALL = summaryData.SUM_M1 + summaryData.SUM_M4;
+
+                // ส่งไปให้ Backend ทำงาน
+                const payload = { action: "generateGraphic", summaryData: summaryData };
+                const res = await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+                const result = await res.json();
+
+                if(result.status === 'success') {
+                    const link = document.createElement('a');
+                    link.href = result.image.base64; 
+                    link.download = result.image.filename;
+                    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                } else throw new Error(result.message);
+
+            } catch (e) { alert("เกิดข้อผิดพลาด: " + e.message); }
+            
+            btn.disabled = false; btnText.innerHTML = '🪄 ดึงข้อมูลลงตารางและดาวน์โหลดรูป';
         }
 
+        // ===================== CSV Export =====================
+        function exportToCSV() {
+            if(!globalRawData) return;
+            const date = document.getElementById('exportDateSelect').value, grade = document.getElementById('exportGradeSelect').value;
+            let csv = "\uFEFFวันที่,เวลา,ระดับชั้น,เลขที่,ชื่อ-นามสกุล,โรงเรียนเดิม,เขตพื้นที่,ความสามารถ,สายการเรียน,สถานะ,ผู้รับสมัคร\r\n";
+            const dates = date === 'all' ? Object.keys(globalRawData).sort() : [date];
+            const grades = grade === 'all' ? ['ม.1', 'ม.4'] : [grade];
+            dates.forEach(d => grades.forEach(g => {
+                (globalRawData[d][g]||[]).reverse().forEach(s => {
+                    const z = IN_ZONE_SCHOOLS.includes(s.prevSchool)?'ในเขต':'นอกเขต';
+                    csv += `"${s.dateStr}","${s.time}","${s.grade}","${s.appNo}","${s.fullName}","${s.prevSchool}","${z}","${s.ability}","${s.track}","${s.isOldStudent}","${s.staffName}"\r\n`;
+                });
+            }));
+            const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], {type: 'text/csv;charset=utf-8;'}));
+            link.download = `ข้อมูล_${grade}_${date}.csv`; link.click();
+        }
+
+        // TV Mode 
+        function startTVClock() { if (clockInterval) clearInterval(clockInterval); const u=()=>{ const n=new Date(); document.getElementById('tv-clock-time').textContent=n.toLocaleTimeString('th-TH'); document.getElementById('tv-clock-date').textContent=n.toLocaleDateString('th-TH',{weekday:'long',year:'numeric',month:'long',day:'numeric'}); }; u(); clockInterval=setInterval(u,1000); }
+        function openTVMode() { document.getElementById('tv-mode-container').classList.remove('hidden'); document.getElementById('main-app-container').classList.add('hidden'); const e=document.documentElement; if(e.requestFullscreen)e.requestFullscreen(); else if(e.webkitRequestFullscreen)e.webkitRequestFullscreen(); startTVClock(); loadDashboardData(); if(tvRefreshInterval)clearInterval(tvRefreshInterval); tvRefreshInterval=setInterval(loadDashboardData,30000); }
+        function closeTVMode() { document.getElementById('tv-mode-container').classList.add('hidden'); document.getElementById('main-app-container').classList.remove('hidden'); if(document.exitFullscreen)document.exitFullscreen(); else if(document.webkitExitFullscreen)document.webkitExitFullscreen(); clearInterval(tvRefreshInterval); clearInterval(clockInterval); }
+        document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && !document.getElementById('tv-mode-container').classList.contains('hidden')) closeTVMode(); });
+        
+        function updateTVDataUI(data, inZ, outZ) {
+            document.getElementById('tv-all-total').textContent = (data.totalM1||0)+(data.totalM4||0); document.getElementById('tv-all-m1').textContent = data.totalM1||0; document.getElementById('tv-all-m4').textContent = data.totalM4||0;
+            document.getElementById('tv-in-zone').textContent = inZ||0; document.getElementById('tv-out-zone').textContent = outZ||0;
+            let ld="ไม่มี", tM1=0, tM4=0;
+            if(data.dailyStats && Object.keys(data.dailyStats).length>0) {
+                const dates = Object.keys(data.dailyStats).sort((a,b)=>a.split('/').reverse().join('').localeCompare(b.split('/').reverse().join('')));
+                const k = dates[dates.length-1]; ld=`วันที่ ${k}`; tM1=data.dailyStats[k]['ม.1']||0; tM4=data.dailyStats[k]['ม.4']||0;
+            }
+            document.getElementById('tv-latest-date').innerHTML=`📍 ข้อมูลประจำ <b>${ld}</b>`; document.getElementById('tv-today-m1').textContent=tM1; document.getElementById('tv-today-m4').textContent=tM4; document.getElementById('tv-today-total').textContent=tM1+tM4;
+            document.getElementById('tv-last-updated').textContent=`อัปเดตล่าสุด: ${new Date().toLocaleTimeString('th-TH')}`;
+        }
+
+        // Rendering Components
         function renderTimeline(dataByDate) {
-            const container = document.getElementById('applicants-timeline');
-            container.innerHTML = '';
-            if (!dataByDate || Object.keys(dataByDate).length === 0) return container.innerHTML = '<div class="text-center bg-slate-50 rounded-2xl p-10 text-slate-400 font-bold">📂 ยังไม่มีข้อมูลผู้สมัครในระบบ</div>';
-
-            const sortedDates = Object.keys(dataByDate).sort((a,b)=> {
-                 let da = a.split('/').reverse().join('');
-                 let db = b.split('/').reverse().join('');
-                 return db.localeCompare(da); 
-            });
-
-            sortedDates.forEach(date => {
-                const m1 = dataByDate[date]["ม.1"] || [], m4 = dataByDate[date]["ม.4"] || [];
+            const container = document.getElementById('applicants-timeline'); container.innerHTML = '';
+            if (!dataByDate || Object.keys(dataByDate).length === 0) return;
+            Object.keys(dataByDate).sort((a,b)=>b.localeCompare(a)).forEach(date => {
+                const m1 = dataByDate[date]["ม.1"]||[], m4 = dataByDate[date]["ม.4"]||[];
                 container.innerHTML += `
-                <div class="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
-                    <div class="bg-blue-50/50 px-6 py-4 border-b border-blue-100 flex items-center gap-3">
-                        <span class="bg-white p-2 rounded-lg shadow-sm">📅</span>
-                        <h4 class="font-bold text-blue-900 text-lg">วันที่ ${date} <span class="text-sm font-normal text-slate-500 ml-2">(รวม ${m1.length+m4.length} คน)</span></h4>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x border-slate-100">
-                        <div class="p-5 bg-blue-50/10">
-                            <h5 class="font-bold text-blue-700 mb-4 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-500"></span> ม.1 (${m1.length} คน)</h5>
-                            <div class="space-y-3 max-h-60 overflow-y-auto custom-scrollbar pr-2">${m1.length ? m1.map(s => htmlItem(s, 'blue')).join('') : '<p class="text-sm text-slate-400">ไม่มีข้อมูล</p>'}</div>
-                        </div>
-                        <div class="p-5 bg-pink-50/10">
-                            <h5 class="font-bold text-pink-600 mb-4 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-pink-500"></span> ม.4 (${m4.length} คน)</h5>
-                            <div class="space-y-3 max-h-60 overflow-y-auto custom-scrollbar pr-2">${m4.length ? m4.map(s => htmlItem(s, 'pink')).join('') : '<p class="text-sm text-slate-400">ไม่มีข้อมูล</p>'}</div>
-                        </div>
-                    </div>
+                <div class="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm mb-6">
+                    <div class="bg-blue-50/50 px-6 py-4 border-b flex items-center gap-3"><span class="bg-white p-2 rounded-lg shadow-sm">📅</span><h4 class="font-bold text-blue-900 text-lg">วันที่ ${date} <span class="text-sm font-normal text-slate-500 ml-2">(รวม ${m1.length+m4.length} คน)</span></h4></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x"><div class="p-5 bg-pink-50/10"><h5 class="font-bold text-pink-600 mb-4 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-pink-500"></span> ม.1 (${m1.length} คน)</h5><div class="space-y-3 max-h-60 overflow-y-auto custom-scrollbar">${m1.map(s=>htmlItem(s,'pink')).join('')}</div></div><div class="p-5 bg-blue-50/10"><h5 class="font-bold text-blue-600 mb-4 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-500"></span> ม.4 (${m4.length} คน)</h5><div class="space-y-3 max-h-60 overflow-y-auto custom-scrollbar">${m4.map(s=>htmlItem(s,'blue')).join('')}</div></div></div>
                 </div>`;
             });
         }
 
         function htmlItem(s, color) {
-            const bgColor = color === 'blue' ? 'bg-white border-blue-100 hover:border-blue-300' : 'bg-white border-pink-100 hover:border-pink-300';
-            const numColor = color === 'blue' ? 'text-blue-600 bg-blue-50' : 'text-pink-600 bg-pink-50';
-            const zoneBadge = IN_ZONE_SCHOOLS.includes(s.prevSchool) ? `<span class="text-[10px] bg-teal-100 text-teal-700 px-2 py-0.5 rounded-md font-medium">📍 ในเขต</span>` : `<span class="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-md font-medium">🌍 นอกเขต</span>`;
-
+            const z = IN_ZONE_SCHOOLS.includes(s.prevSchool)?`<span class="text-[10px] bg-teal-100 text-teal-700 px-2 py-0.5 rounded-md font-medium">📍 ในเขต</span>`:`<span class="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-md font-medium">🌍 นอกเขต</span>`;
             return `
-            <div class="p-4 ${bgColor} border rounded-xl text-sm shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition-colors">
-                <div class="flex justify-between items-start font-bold text-slate-700 mb-1">
-                    <span class="text-base">${s.fullName}</span>
-                    <span class="${numColor} px-2 py-1 rounded-md text-xs">เลขที่ ${s.appNo}</span>
-                </div>
-                <p class="text-xs text-slate-500 truncate flex items-center gap-1"><span>🏫</span> รร.เดิม: ${s.prevSchool}</p>
-                <div class="flex flex-wrap gap-1.5 mt-2.5">
-                    ${zoneBadge}
-                    ${s.ability ? `<span class="text-[10px] bg-purple-100 text-purple-700 px-2 py-0.5 rounded-md font-medium">⭐ ${s.ability}</span>` : ''}
-                    ${s.track ? `<span class="text-[10px] bg-teal-100 text-teal-700 px-2 py-0.5 rounded-md font-medium">📚 ${s.track}</span>` : ''}
-                    ${s.isOldStudent === 'นักเรียนเดิม' ? `<span class="text-[10px] bg-pink-100 text-pink-700 px-2 py-0.5 rounded-md font-medium">🏫 เด็กเก่า</span>` : ''}
-                </div>
+            <div class="p-4 bg-white border border-${color}-100 rounded-xl text-sm shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                <div class="flex justify-between items-start font-bold text-slate-700 mb-1"><span class="text-base">${s.fullName}</span><span class="text-${color}-600 bg-${color}-50 px-2 py-1 rounded-md text-xs">เลขที่ ${s.appNo}</span></div>
+                <p class="text-xs text-slate-500 truncate">🏫 รร.เดิม: ${s.prevSchool}</p>
+                <div class="flex flex-wrap gap-1.5 mt-2.5">${z}${s.ability?`<span class="text-[10px] bg-purple-100 text-purple-700 px-2 py-0.5 rounded-md">⭐ ${s.ability}</span>`:''}${s.track?`<span class="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-md">📚 ${s.track}</span>`:''}${s.isOldStudent==='นักเรียนเดิม'?`<span class="text-[10px] bg-pink-100 text-pink-700 px-2 py-0.5 rounded-md">🏫 เด็กเก่า</span>`:''}</div>
             </div>`;
         }
 
-        let dailyChartInstance = null, schoolChartInstance = null;
-        Chart.defaults.font.family = "'Sarabun', sans-serif";
-        Chart.defaults.color = "#64748b";
-
         function renderDailyChart(data) {
-            const ctx = document.getElementById('dailyChart').getContext('2d');
-            const dates = Object.keys(data).sort((a,b) => {
-                 let da = a.split('/').reverse().join('');
-                 let db = b.split('/').reverse().join('');
-                 return da.localeCompare(db); 
-            });
+            const ctx = document.getElementById('dailyChart').getContext('2d'); const dates = Object.keys(data).sort();
             if(dailyChartInstance) dailyChartInstance.destroy();
-            dailyChartInstance = new Chart(ctx, { 
-                type: 'bar', 
-                data: { 
-                    labels: dates, 
-                    datasets: [
-                        { label: 'ม.1', data: dates.map(d=>data[d]["ม.1"]), backgroundColor: '#3b82f6', borderRadius: 6 }, 
-                        { label: 'ม.4', data: dates.map(d=>data[d]["ม.4"]), backgroundColor: '#ec4899', borderRadius: 6 }
-                    ] 
-                },
-                options: { 
-                    responsive: true, maintainAspectRatio: false,
-                    scales: { y: { beginAtZero: true, grid: { borderDash: [4, 4] } }, x: { grid: { display: false } } },
-                    plugins: { legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8 } } }
-                }
-            });
+            dailyChartInstance = new Chart(ctx, { type: 'bar', data: { labels: dates, datasets: [{ label: 'ม.1', data: dates.map(d=>data[d]["ม.1"]), backgroundColor: '#ec4899', borderRadius: 6 }, { label: 'ม.4', data: dates.map(d=>data[d]["ม.4"]), backgroundColor: '#3b82f6', borderRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y:{beginAtZero:true}, x:{grid:{display:false}} } } });
         }
 
         function renderSchoolChart(data) {
-            const ctx = document.getElementById('schoolChart').getContext('2d');
-            const sorted = Object.entries(data).sort((a,b)=>b[1]-a[1]).slice(0,5);
+            const ctx = document.getElementById('schoolChart').getContext('2d'); const sorted = Object.entries(data).sort((a,b)=>b[1]-a[1]).slice(0,5);
             if(schoolChartInstance) schoolChartInstance.destroy();
-            schoolChartInstance = new Chart(ctx, { 
-                type: 'doughnut', 
-                data: { 
-                    labels: sorted.map(i=>i[0]), 
-                    datasets: [{ data: sorted.map(i=>i[1]), backgroundColor: ['#1e3a8a', '#3b82f6', '#ec4899', '#fbcfe8', '#cbd5e1'], borderWidth: 2, borderColor: '#ffffff' }] 
-                },
-                options: { 
-                    responsive: true, maintainAspectRatio: false, cutout: '70%', 
-                    plugins: { legend: { position: 'right', labels: { usePointStyle: true, boxWidth: 8 } } } 
-                }
-            });
+            schoolChartInstance = new Chart(ctx, { type: 'doughnut', data: { labels: sorted.map(i=>i[0]), datasets: [{ data: sorted.map(i=>i[1]), backgroundColor: ['#1e40af','#3b82f6','#93c5fd','#be185d','#f472b6'] }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'right' } } } });
         }
     </script>
 </body>
