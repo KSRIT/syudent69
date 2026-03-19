@@ -171,23 +171,12 @@
                         <div class="bg-white p-8 border border-blue-50 rounded-3xl shadow-sm"><h3 class="text-lg font-bold text-blue-900 mb-6 text-center">🏫 สถิติโรงเรียนเดิม (Top 5)</h3><div class="relative h-72"><canvas id="schoolChart"></canvas></div></div>
                     </div>
 
-                    <!-- เพิ่มส่วนกราฟแนวโน้มสายการเรียน ม.4 ตรงนี้ -->
-                    <div class="grid grid-cols-1 gap-6">
-                        <div class="bg-white p-8 border border-blue-50 rounded-3xl shadow-sm">
-                            <h3 class="text-lg font-bold text-pink-700 mb-2 text-center">📚 แนวโน้มการเลือกสายการเรียน (ม.4)</h3>
-                            <p class="text-center text-sm text-slate-500 mb-6">สัดส่วนผู้สมัครเข้าศึกษาต่อชั้นมัธยมศึกษาปีที่ 4 จำแนกตามแผนการเรียน</p>
-                            <div class="relative h-80 lg:w-2/3 mx-auto"><canvas id="trackChart"></canvas></div>
-                        </div>
-                    </div>
-
                     <div class="bg-white rounded-3xl p-8 border border-blue-50 shadow-sm">
                         <div class="flex justify-between items-center border-b-2 border-slate-100 pb-4 mb-6">
-                            <h3 class="text-xl font-bold text-blue-900">📑 ข้อมูลผู้สมัครล่าสุด</h3>
+                            <h3 class="text-xl font-bold text-blue-900">📑 ข้อมูลผู้สมัครเรียงตามวัน</h3>
                             <button onclick="loadDashboardData()" class="text-sm font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 py-2.5 px-5 rounded-xl transition-colors">🔄 รีเฟรช</button>
                         </div>
-                        <div id="applicants-timeline" class="space-y-4">
-                            <!-- รายการผู้สมัครจะถูกแทรกที่นี่ -->
-                        </div>
+                        <div id="applicants-timeline" class="space-y-6"></div>
                     </div>
                     
                 </div>
@@ -243,32 +232,8 @@
         let globalRawData = {}; 
         let tvRefreshInterval = null;
         let clockInterval = null;
-        let dailyChartInstance = null;
-        let schoolChartInstance = null;
-        let trackChartInstance = null; // เพิ่มตัวแปรสำหรับกราฟสายการเรียน
-
-        // ข้อมูลจำลองสำหรับการแสดงผล
-        const mockData = {
-            total: 156, m1: 84, m4: 72, inZone: 95, outZone: 61,
-            dailyStats: {
-                labels: ['1 มี.ค.', '2 มี.ค.', '3 มี.ค.', '4 มี.ค.', '5 มี.ค.'],
-                m1: [15, 20, 18, 12, 19],
-                m4: [10, 18, 22, 15, 7]
-            },
-            schoolStats: {
-                labels: ['โรงเรียนปากแพรกวิทยาคม', 'โรงเรียนองค์การอุตสาหกรรมป่าไม้ 9', 'โรงเรียนวัดคีรีวง', 'โรงเรียนบ้านคอกช้าง', 'โรงเรียนอื่นๆ'],
-                counts: [45, 28, 15, 12, 56]
-            },
-            trackStats: { // ข้อมูลจำลองสำหรับสายการเรียน ม.4
-                labels: ['เตรียมวิศวกรรมศาสตร์', 'นวัตกรรมการจัดการเกษตร', 'ภาษาอังกฤษเพื่อการสื่อสารธุรกิจ', 'การจัดการธุรกิจอาหาร'],
-                counts: [25, 15, 18, 14]
-            },
-            recentApplicants: [
-                { id: "001", name: "ด.ช. สมชาย ใจดี", grade: "ม.1", school: "โรงเรียนบ้านคอกช้าง", time: "5 มี.ค. 2567 10:30" },
-                { id: "002", name: "น.ส. สมศรี เรียนเก่ง", grade: "ม.4", school: "โรงเรียนปากแพรกวิทยาคม", track: "ภาษาอังกฤษเพื่อการสื่อสารธุรกิจ", time: "5 มี.ค. 2567 10:15" },
-                { id: "003", name: "ด.ช. สมศักดิ์ มุ่งมั่น", grade: "ม.1", school: "โรงเรียนวัดคีรีวง", time: "5 มี.ค. 2567 09:45" }
-            ]
-        };
+        let dailyChartInstance = null; // เพิ่มบรรทัดนี้เพื่อแก้ error
+        let schoolChartInstance = null; // เพิ่มบรรทัดนี้เพื่อแก้ error
 
         document.addEventListener('DOMContentLoaded', () => { addStudentRow(); updateFormDisplay(); });
 
@@ -338,10 +303,8 @@
                             <div class="bg-pink-50/50 p-4 rounded-2xl border border-pink-100">
                                 <label class="block text-sm font-bold text-pink-900 mb-2">📚 สายการเรียน (ม.4) *</label>
                                 <select name="m4Track" class="modern-input bg-white text-sm">
-                                    <option value="">-- เลือกสายการเรียน --</option>
-                                    <option value="เตรียมวิศวกรรมศาสตร์">เตรียมวิศวกรรมศาสตร์</option>
-                                    <option value="นวัตกรรมการจัดการเกษตร">นวัตกรรมการจัดการเกษตร</option>
-                                    <option value="ภาษาอังกฤษเพื่อการสื่อสารธุรกิจ">ภาษาอังกฤษเพื่อการสื่อสารธุรกิจ</option>
+                                    <option value="">-- เลือกสายการเรียน --</option><option <option value="เตรียมวิศวกรรมศาสตร์">เตรียมวิศวกรรมศาสตร์</option>
+                                    <option value="นวัตกรรมการจัดการเกษตร">นวัตกรรมการจัดการเกษตร</option><option value="ภาษาอังกฤษเพื่อการสื่อสารธุรกิจ">ภาษาอังกฤษเพื่อการสื่อสารธุรกิจ</option>
                                     <option value="การจัดการธุรกิจอาหาร">การจัดการธุรกิจอาหาร</option>
                                 </select>
                                 <div class="mt-4 pt-4 border-t border-pink-200/50">
@@ -366,152 +329,200 @@
 
         async function submitForm(e) {
             e.preventDefault();
-            // จำลองการโหลดบันทึก
-            const btn = document.getElementById('submitBtn');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<div class="loader mr-2"></div> กำลังบันทึกข้อมูล...';
-            
-            setTimeout(() => {
-                btn.innerHTML = '✅ บันทึกสำเร็จ!';
-                btn.classList.replace('from-pink-600', 'from-green-500');
-                btn.classList.replace('to-pink-500', 'to-green-400');
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                    btn.classList.replace('from-green-500', 'from-pink-600');
-                    btn.classList.replace('to-green-400', 'to-pink-500');
-                    document.getElementById('regForm').reset();
-                    document.getElementById('students-container').innerHTML = '';
-                    addStudentRow();
-                }, 2000);
-            }, 1000);
+            const staffName = document.getElementById('staffName').value, grade = document.querySelector('input[name="globalGrade"]:checked').value, students = [];
+            document.querySelectorAll('.student-row').forEach(row => {
+                let abilities = [];
+                row.querySelectorAll(`.ability-cb-${row.id}:checked`).forEach(cb => { if(cb.value === 'อื่นๆ') { const otherVal = document.getElementById(`other-ability-${row.id}`).value.trim(); if(otherVal) abilities.push(otherVal); } else abilities.push(cb.value); });
+                const schoolSelect = row.querySelector('select[name="prevSchoolSelect"]').value;
+                const prevSchoolValue = schoolSelect === 'other' ? document.getElementById(`other-school-${row.id}`).value.trim() : schoolSelect;
+                const oldStudentCheck = row.querySelector('input[name="isOldStudent"]');
+
+                students.push({
+                    action: "submit", grade: grade, staffName: staffName, appNo: row.querySelector('input[name="appNo"]').value, fullName: row.querySelector('input[name="fullName"]').value,
+                    prevSchool: prevSchoolValue, ability: abilities.join(', '), track: grade === 'ม.4' ? row.querySelector('select[name="m4Track"]').value : "",
+                    isOldStudent: (grade === 'ม.4' && oldStudentCheck?.checked) ? "นักเรียนเดิม" : (grade === 'ม.4' ? "นักเรียนใหม่" : "")
+                });
+            });
+
+            const btn = document.getElementById('submitBtn'), msg = document.getElementById('submitMsg'), prog = document.getElementById('progressBar');
+            btn.disabled = true; msg.classList.remove('hidden'); document.getElementById('progressContainer').classList.remove('hidden');
+            let success = 0, fail = 0;
+            for (let i=0; i<students.length; i++) {
+                prog.style.width = `${(i/students.length)*100}%`; msg.innerHTML = `<span class="loader"></span> กำลังบันทึก ${students[i].fullName}`;
+                try { const res = await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify(students[i]) }); if((await res.json()).status === 'success') success++; else fail++; } catch(e) { fail++; }
+            }
+            prog.style.width = '100%'; btn.disabled = false;
+            msg.innerHTML = fail === 0 ? `🎉 สำเร็จ ${success} คน!` : `⚠️ สำเร็จ ${success}, ล้มเหลว ${fail}`;
+            msg.className = `mt-5 font-bold block p-4 rounded-xl border ${fail===0 ? 'bg-green-50 text-green-700 border-green-200' : 'bg-orange-50 text-orange-700 border-orange-200'}`;
+            if(fail === 0) { document.getElementById('regForm').reset(); document.getElementById('staffName').value=staffName; document.getElementById('students-container').innerHTML=''; addStudentRow(); }
+            setTimeout(() => { document.getElementById('progressContainer').classList.add('hidden'); msg.classList.add('hidden'); }, 5000);
         }
 
         // ===================== Dashboard Logic =====================
-        function loadDashboardData() {
-            document.getElementById('loadingDash').classList.remove('hidden');
-            document.getElementById('dashboardContent').classList.add('hidden');
+        async function loadDashboardData() {
+            const isTVMode = !document.getElementById('tv-mode-container').classList.contains('hidden');
+            if(!isTVMode) { document.getElementById('loadingDash').classList.remove('hidden'); document.getElementById('dashboardContent').classList.add('hidden'); }
+            try {
+                const res = await fetch(GOOGLE_SCRIPT_URL); const data = await res.json();
+                globalRawData = data.applicantsByDate;
+                populateExportSelect(globalRawData);
+
+                document.getElementById('stat-total').innerText = (data.totalM1||0) + (data.totalM4||0); document.getElementById('stat-m1').innerText = data.totalM1||0; document.getElementById('stat-m4').innerText = data.totalM4||0;
+                
+                let inZoneCount = 0, outZoneCount = 0;
+                if(data.applicantsByDate) { Object.values(data.applicantsByDate).forEach(d => { ['ม.1','ม.4'].forEach(g => { if(d[g]) d[g].forEach(s => { IN_ZONE_SCHOOLS.includes(s.prevSchool) ? inZoneCount++ : outZoneCount++; }); }); }); }
+                document.getElementById('stat-in-zone').innerText = inZoneCount; document.getElementById('stat-out-zone').innerText = outZoneCount;
+                
+                if(data.dailyStats) renderDailyChart(data.dailyStats); if(data.schoolStats) renderSchoolChart(data.schoolStats);
+                renderTimeline(data.applicantsByDate);
+                
+                if(!isTVMode) { document.getElementById('loadingDash').classList.add('hidden'); document.getElementById('dashboardContent').classList.remove('hidden'); }
+                updateTVDataUI(data, inZoneCount, outZoneCount);
+            } catch (e) { if(!isTVMode) document.getElementById('loadingDash').innerHTML = `<p class="text-red-500 font-bold p-4">❌ Error: ${e.message}</p>`; }
+        }
+
+        function populateExportSelect(dataByDate) {
+            const dates = Object.keys(dataByDate||{}).sort((a,b)=>b.localeCompare(a));
+            document.getElementById('exportDateSelect').innerHTML = '<option value="all">📅 ทุกวัน</option>' + dates.map(d=>`<option value="${d}">📍 ${d}</option>`).join('');
+        }
+
+        // ===================== ฟังก์ชันดึงข้อมูลลงตาราง 5 วัน =====================
+        async function exportToGraphic() {
+            if(!globalRawData || Object.keys(globalRawData).length === 0) return alert("ยังไม่มีข้อมูลสำหรับสร้างตาราง");
             
-            // จำลองการดึงข้อมูลจาก Server
-            setTimeout(() => {
-                renderDashboard(mockData);
-                document.getElementById('loadingDash').classList.add('hidden');
-                document.getElementById('dashboardContent').classList.remove('hidden');
-            }, 800);
-        }
+            const btn = document.getElementById('btnGenerateGraphic');
+            const btnText = document.getElementById('graphicBtnText');
+            
+            btn.disabled = true; 
+            btnText.innerHTML = '<span class="loader" style="width:14px;height:14px;border-top-color:#fff;"></span> กำลังประมวลผลตาราง...';
 
-        function renderDashboard(data) {
-            // อัปเดตตัวเลขสถิติ
-            document.getElementById('stat-total').innerText = data.total;
-            document.getElementById('stat-m1').innerText = data.m1;
-            document.getElementById('stat-m4').innerText = data.m4;
-            document.getElementById('stat-in-zone').innerText = data.inZone;
-            document.getElementById('stat-out-zone').innerText = data.outZone;
+            try {
+                // ดึงวันที่ทั้งหมดและเรียงจากน้อยไปมาก
+                const availableDates = Object.keys(globalRawData).sort();
+                
+                // เตรียมโครงสร้างข้อมูลสำหรับส่งไป Backend
+                let summaryData = { SUM_M1: 0, SUM_M4: 0, SUM_ALL: 0 };
 
-            // กราฟรายวัน
-            const ctxDaily = document.getElementById('dailyChart').getContext('2d');
-            if(dailyChartInstance) dailyChartInstance.destroy();
-            dailyChartInstance = new Chart(ctxDaily, {
-                type: 'bar',
-                data: {
-                    labels: data.dailyStats.labels,
-                    datasets: [
-                        { label: 'ม.1', data: data.dailyStats.m1, backgroundColor: '#3b82f6', borderRadius: 6 },
-                        { label: 'ม.4', data: data.dailyStats.m4, backgroundColor: '#ec4899', borderRadius: 6 }
-                    ]
-                },
-                options: { responsive: true, maintainAspectRatio: false, scales: { x: { stacked: true }, y: { stacked: true } } }
-            });
-
-            // กราฟโรงเรียนเดิม
-            const ctxSchool = document.getElementById('schoolChart').getContext('2d');
-            if(schoolChartInstance) schoolChartInstance.destroy();
-            schoolChartInstance = new Chart(ctxSchool, {
-                type: 'pie',
-                data: {
-                    labels: data.schoolStats.labels,
-                    datasets: [{ data: data.schoolStats.counts, backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#94a3b8'], borderWidth: 0 }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 12 } } } }
-            });
-
-            // ==========================================
-            // เพิ่มส่วนแสดงผลกราฟแนวโน้มสายการเรียน ม.4 
-            // ==========================================
-            const ctxTrack = document.getElementById('trackChart').getContext('2d');
-            if(trackChartInstance) trackChartInstance.destroy();
-            trackChartInstance = new Chart(ctxTrack, {
-                type: 'doughnut', // ใช้ Doughnut chart ให้ดูทันสมัย
-                data: {
-                    labels: data.trackStats.labels,
-                    datasets: [{
-                        data: data.trackStats.counts,
-                        backgroundColor: [
-                            '#ec4899', // Pink (เตรียมวิศวะ)
-                            '#10b981', // Emerald (เกษตร)
-                            '#3b82f6', // Blue (ภาษาอังกฤษ)
-                            '#f59e0b'  // Amber (ธุรกิจอาหาร)
-                        ],
-                        hoverOffset: 4,
-                        borderWidth: 0,
-                        cutout: '65%' // ทำให้เป็นวงแหวน
-                    }]
-                },
-                options: { 
-                    responsive: true, 
-                    maintainAspectRatio: false, 
-                    plugins: { 
-                        legend: { 
-                            position: 'bottom',
-                            labels: {
-                                padding: 20,
-                                font: {
-                                    family: "'Sarabun', sans-serif",
-                                    size: 13
-                                }
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.label || '';
-                                    if (label) { label += ': '; }
-                                    // คำนวณเปอร์เซ็นต์
-                                    const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
-                                    const val = context.raw;
-                                    const percentage = Math.round((val / total) * 100);
-                                    label += val + ' คน (' + percentage + '%)';
-                                    return label;
-                                }
-                            }
-                        }
-                    } 
+                // เตรียมตัวแปรว่างไว้ล่วงหน้า 5 วัน เพื่อไม่ให้เกิด Error ในสไลด์ถ้าวันไม่ครบ
+                for(let i=1; i<=5; i++) {
+                    summaryData[`D${i}_M1_OUT`] = ""; summaryData[`D${i}_M1_IN`] = ""; summaryData[`D${i}_M1_TOT`] = "";
+                    summaryData[`D${i}_M4_OLD`] = ""; summaryData[`D${i}_M4_NEW`] = ""; summaryData[`D${i}_M4_TOT`] = "";
                 }
+
+                // วนลูปใส่วันที่ที่มีข้อมูล (ทำสูงสุดแค่ 5 วันตามตาราง)
+                for(let i = 0; i < Math.min(availableDates.length, 5); i++) {
+                    let d = availableDates[i];
+                    let dNum = i + 1; // เลขวัน D1, D2, D3, D4, D5
+                    
+                    let m1List = globalRawData[d]["ม.1"] || [];
+                    let m4List = globalRawData[d]["ม.4"] || [];
+
+                    let m1In = 0, m1Out = 0, m4Old = 0, m4New = 0;
+                    m1List.forEach(s => { IN_ZONE_SCHOOLS.includes(s.prevSchool) ? m1In++ : m1Out++; });
+                    m4List.forEach(s => { s.isOldStudent === 'นักเรียนเดิม' ? m4Old++ : m4New++; });
+
+                    // ยอดรายวัน (ถ้าเป็น 0 จะใส่ "-" แทน)
+                    summaryData[`D${dNum}_M1_OUT`] = m1Out > 0 ? m1Out : "-";
+                    summaryData[`D${dNum}_M1_IN`]  = m1In > 0 ? m1In : "-";
+                    summaryData[`D${dNum}_M1_TOT`] = m1List.length > 0 ? m1List.length : "-";
+
+                    summaryData[`D${dNum}_M4_OLD`] = m4Old > 0 ? m4Old : "-";
+                    summaryData[`D${dNum}_M4_NEW`] = m4New > 0 ? m4New : "-";
+                    summaryData[`D${dNum}_M4_TOT`] = m4List.length > 0 ? m4List.length : "-";
+
+                    // เก็บยอดสะสมรวม
+                    summaryData.SUM_M1 += m1List.length;
+                    summaryData.SUM_M4 += m4List.length;
+                }
+                summaryData.SUM_ALL = summaryData.SUM_M1 + summaryData.SUM_M4;
+
+                // ส่งไปให้ Backend ทำงาน
+                const payload = { action: "generateGraphic", summaryData: summaryData };
+                const res = await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+                const result = await res.json();
+
+                if(result.status === 'success') {
+                    const link = document.createElement('a');
+                    link.href = result.image.base64; 
+                    link.download = result.image.filename;
+                    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                } else throw new Error(result.message);
+
+            } catch (e) { alert("เกิดข้อผิดพลาด: " + e.message); }
+            
+            btn.disabled = false; btnText.innerHTML = '🪄 ดึงข้อมูลลงตารางและดาวน์โหลดรูป';
+        }
+
+        // ===================== CSV Export =====================
+        function exportToCSV() {
+            if(!globalRawData) return;
+            const date = document.getElementById('exportDateSelect').value, grade = document.getElementById('exportGradeSelect').value;
+            let csv = "\uFEFFวันที่,เวลา,ระดับชั้น,เลขที่,ชื่อ-นามสกุล,โรงเรียนเดิม,เขตพื้นที่,ความสามารถ,สายการเรียน,สถานะ,ผู้รับสมัคร\r\n";
+            const dates = date === 'all' ? Object.keys(globalRawData).sort() : [date];
+            const grades = grade === 'all' ? ['ม.1', 'ม.4'] : [grade];
+            dates.forEach(d => grades.forEach(g => {
+                (globalRawData[d][g]||[]).reverse().forEach(s => {
+                    const z = IN_ZONE_SCHOOLS.includes(s.prevSchool)?'ในเขต':'นอกเขต';
+                    csv += `"${s.dateStr}","${s.time}","${s.grade}","${s.appNo}","${s.fullName}","${s.prevSchool}","${z}","${s.ability}","${s.track}","${s.isOldStudent}","${s.staffName}"\r\n`;
+                });
+            }));
+            const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], {type: 'text/csv;charset=utf-8;'}));
+            link.download = `ข้อมูล_${grade}_${date}.csv`; link.click();
+        }
+
+        // TV Mode 
+        function startTVClock() { if (clockInterval) clearInterval(clockInterval); const u=()=>{ const n=new Date(); document.getElementById('tv-clock-time').textContent=n.toLocaleTimeString('th-TH'); document.getElementById('tv-clock-date').textContent=n.toLocaleDateString('th-TH',{weekday:'long',year:'numeric',month:'long',day:'numeric'}); }; u(); clockInterval=setInterval(u,1000); }
+        function openTVMode() { document.getElementById('tv-mode-container').classList.remove('hidden'); document.getElementById('main-app-container').classList.add('hidden'); const e=document.documentElement; if(e.requestFullscreen)e.requestFullscreen(); else if(e.webkitRequestFullscreen)e.webkitRequestFullscreen(); startTVClock(); loadDashboardData(); if(tvRefreshInterval)clearInterval(tvRefreshInterval); tvRefreshInterval=setInterval(loadDashboardData,30000); }
+        function closeTVMode() { document.getElementById('tv-mode-container').classList.add('hidden'); document.getElementById('main-app-container').classList.remove('hidden'); if(document.exitFullscreen)document.exitFullscreen(); else if(document.webkitExitFullscreen)document.webkitExitFullscreen(); clearInterval(tvRefreshInterval); clearInterval(clockInterval); }
+        document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && !document.getElementById('tv-mode-container').classList.contains('hidden')) closeTVMode(); });
+        
+        function updateTVDataUI(data, inZ, outZ) {
+            document.getElementById('tv-all-total').textContent = (data.totalM1||0)+(data.totalM4||0); document.getElementById('tv-all-m1').textContent = data.totalM1||0; document.getElementById('tv-all-m4').textContent = data.totalM4||0;
+            document.getElementById('tv-in-zone').textContent = inZ||0; document.getElementById('tv-out-zone').textContent = outZ||0;
+            let ld="ไม่มี", tM1=0, tM4=0;
+            if(data.dailyStats && Object.keys(data.dailyStats).length>0) {
+                const dates = Object.keys(data.dailyStats).sort((a,b)=>a.split('/').reverse().join('').localeCompare(b.split('/').reverse().join('')));
+                const k = dates[dates.length-1]; ld=`วันที่ ${k}`; tM1=data.dailyStats[k]['ม.1']||0; tM4=data.dailyStats[k]['ม.4']||0;
+            }
+            document.getElementById('tv-latest-date').innerHTML=`📍 ข้อมูลประจำ <b>${ld}</b>`; document.getElementById('tv-today-m1').textContent=tM1; document.getElementById('tv-today-m4').textContent=tM4; document.getElementById('tv-today-total').textContent=tM1+tM4;
+            document.getElementById('tv-last-updated').textContent=`อัปเดตล่าสุด: ${new Date().toLocaleTimeString('th-TH')}`;
+        }
+
+        // Rendering Components
+        function renderTimeline(dataByDate) {
+            const container = document.getElementById('applicants-timeline'); container.innerHTML = '';
+            if (!dataByDate || Object.keys(dataByDate).length === 0) return;
+            Object.keys(dataByDate).sort((a,b)=>b.localeCompare(a)).forEach(date => {
+                const m1 = dataByDate[date]["ม.1"]||[], m4 = dataByDate[date]["ม.4"]||[];
+                container.innerHTML += `
+                <div class="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm mb-6">
+                    <div class="bg-blue-50/50 px-6 py-4 border-b flex items-center gap-3"><span class="bg-white p-2 rounded-lg shadow-sm">📅</span><h4 class="font-bold text-blue-900 text-lg">วันที่ ${date} <span class="text-sm font-normal text-slate-500 ml-2">(รวม ${m1.length+m4.length} คน)</span></h4></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x"><div class="p-5 bg-pink-50/10"><h5 class="font-bold text-pink-600 mb-4 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-pink-500"></span> ม.1 (${m1.length} คน)</h5><div class="space-y-3 max-h-60 overflow-y-auto custom-scrollbar">${m1.map(s=>htmlItem(s,'pink')).join('')}</div></div><div class="p-5 bg-blue-50/10"><h5 class="font-bold text-blue-600 mb-4 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-500"></span> ม.4 (${m4.length} คน)</h5><div class="space-y-3 max-h-60 overflow-y-auto custom-scrollbar">${m4.map(s=>htmlItem(s,'blue')).join('')}</div></div></div>
+                </div>`;
             });
-
-            // อัปเดตรายการผู้สมัคร
-            const timeline = document.getElementById('applicants-timeline');
-            timeline.innerHTML = data.recentApplicants.map(app => `
-                <div class="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-slate-100 transition-colors border border-slate-100">
-                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${app.grade === 'ม.1' ? 'bg-blue-100 text-blue-600' : 'bg-pink-100 text-pink-600'}">${app.grade}</div>
-                    <div class="flex-1">
-                        <h4 class="font-bold text-slate-800">${app.name} <span class="text-xs font-normal text-slate-500 ml-2">เลขที่: ${app.id}</span></h4>
-                        <p class="text-sm text-slate-600 text-sm flex gap-2"><span>🏫 ${app.school}</span> ${app.track ? `<span class="text-pink-600 bg-pink-50 px-2 rounded-md">📚 ${app.track}</span>` : ''}</p>
-                    </div>
-                    <div class="text-right text-xs text-slate-400 whitespace-nowrap">🕒 ${app.time}</div>
-                </div>
-            `).join('');
         }
 
-        // ===================== TV Mode (Placeholder) =====================
-        function openTVMode() {
-            document.getElementById('tv-mode-container').classList.remove('hidden');
-            document.documentElement.requestFullscreen().catch(e => console.log(e));
-        }
-        function closeTVMode() {
-            document.getElementById('tv-mode-container').classList.add('hidden');
-            if (document.exitFullscreen) document.exitFullscreen();
+        function htmlItem(s, color) {
+            const z = IN_ZONE_SCHOOLS.includes(s.prevSchool)?`<span class="text-[10px] bg-teal-100 text-teal-700 px-2 py-0.5 rounded-md font-medium">📍 ในเขต</span>`:`<span class="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-md font-medium">🌍 นอกเขต</span>`;
+            return `
+            <div class="p-4 bg-white border border-${color}-100 rounded-xl text-sm shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                <div class="flex justify-between items-start font-bold text-slate-700 mb-1"><span class="text-base">${s.fullName}</span><span class="text-${color}-600 bg-${color}-50 px-2 py-1 rounded-md text-xs">เลขที่ ${s.appNo}</span></div>
+                <p class="text-xs text-slate-500 truncate">🏫 รร.เดิม: ${s.prevSchool}</p>
+                <div class="flex flex-wrap gap-1.5 mt-2.5">${z}${s.ability?`<span class="text-[10px] bg-purple-100 text-purple-700 px-2 py-0.5 rounded-md">⭐ ${s.ability}</span>`:''}${s.track?`<span class="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-md">📚 ${s.track}</span>`:''}${s.isOldStudent==='นักเรียนเดิม'?`<span class="text-[10px] bg-pink-100 text-pink-700 px-2 py-0.5 rounded-md">🏫 เด็กเก่า</span>`:''}</div>
+            </div>`;
         }
 
+        function renderDailyChart(data) {
+            const ctx = document.getElementById('dailyChart').getContext('2d'); const dates = Object.keys(data).sort();
+            if(dailyChartInstance) dailyChartInstance.destroy();
+            dailyChartInstance = new Chart(ctx, { type: 'bar', data: { labels: dates, datasets: [{ label: 'ม.1', data: dates.map(d=>data[d]["ม.1"]), backgroundColor: '#ec4899', borderRadius: 6 }, { label: 'ม.4', data: dates.map(d=>data[d]["ม.4"]), backgroundColor: '#3b82f6', borderRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y:{beginAtZero:true}, x:{grid:{display:false}} } } });
+        }
+
+        function renderSchoolChart(data) {
+            const ctx = document.getElementById('schoolChart').getContext('2d'); const sorted = Object.entries(data).sort((a,b)=>b[1]-a[1]).slice(0,5);
+            if(schoolChartInstance) schoolChartInstance.destroy();
+            schoolChartInstance = new Chart(ctx, { type: 'doughnut', data: { labels: sorted.map(i=>i[0]), datasets: [{ data: sorted.map(i=>i[1]), backgroundColor: ['#1e40af','#3b82f6','#93c5fd','#be185d','#f472b6'] }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'right' } } } });
+        }
     </script>
 </body>
 </html>
